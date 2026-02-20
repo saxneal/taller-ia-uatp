@@ -1,0 +1,947 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Escape EID · Desafío de Estándares</title>
+    
+    <!-- Fuentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root {
+            --bg: #04080f; --surface: #080f1e; --surface2: #0c1828; --border: #152236;
+            --text: #ddeeff; --muted: #4a7a9b;
+            --red: #ff3a3a; --orange: #ff8c00; --yellow: #ffd700;
+            --green: #00ff9d; --blue: #00d4ff; --purple: #a855f7;
+            --neon: #deff9a;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+        /* Scanline visual effect */
+        body::after {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px);
+            pointer-events: none; z-index: 9999;
+        }
+
+        #cvs { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: .35; }
+
+        /* Ajuste Responsivo iPad/Tablet */
+        .shell {
+            position: relative; z-index: 1; max-width: 1100px; margin: 0 auto;
+            padding: 0 40px 80px 180px; /* Despeje crítico para el índice lateral */
+        }
+
+        @media(max-width: 1024px) {
+            .shell { padding: 0 20px 60px 120px; }
+            .nav-terminal span { display: none; } /* Oculta texto en iPad para no chocar */
+        }
+
+        @media(max-width: 640px) {
+            .shell { padding: 0 15px 40px 80px; }
+        }
+
+        /* ── NAVEGACIÓN TERMINAL ── */
+        .nav-terminal { position: fixed; left: 20px; top: 50%; transform: translateY(-50%); z-index: 100; font-family: 'Space Mono', monospace; font-size: 10px; }
+        .nav-item { margin: 15px 0; cursor: pointer; opacity: 0.3; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
+        .nav-item.active { opacity: 1; color: var(--neon); }
+        .nav-dot { width: 10px; height: 10px; border: 1px solid #fff; border-radius: 2px; }
+        .active .nav-dot { background: var(--neon); border-color: var(--neon); box-shadow: 0 0 10px var(--neon); }
+
+        /* ── INTERFAZ ── */
+        .glass { background: rgba(8, 15, 30, 0.8); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 18px; }
+        .btn-action { background: linear-gradient(135deg, #7f0000, #cc0000); border: 1px solid var(--red); box-shadow: 0 0 20px rgba(255,58,58,0.3); transition: 0.3s; }
+        .btn-action:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(255,58,58,0.5); }
+
+        .opt-card { background: var(--surface2); border: 1px solid var(--border); transition: 0.2s; cursor: pointer; display: flex; align-items: flex-start; gap: 12px; }
+        .opt-card:not(.disabled):hover { border-color: var(--blue); background: rgba(0, 212, 255, 0.05); transform: translateX(8px); }
+        .opt-card.correct { border-color: var(--green) !important; background: rgba(0, 255, 157, 0.05) !important; }
+        .opt-card.wrong { border-color: var(--red) !important; background: rgba(255, 58, 58, 0.05) !important; opacity: 0.6; }
+        .opt-card.disabled { cursor: default; }
+
+        .badge-eid { background: rgba(0, 212, 255, 0.1); border: 1px solid var(--blue); color: var(--blue); font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
+
+        .fade-in { animation: fadeIn 0.4s ease-in forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .text-neon { color: var(--neon); }
+    </style>
+</head>
+<body>
+<canvas id="cvs"></canvas>
+
+<!-- NAVEGACIÓN -->
+<nav class="nav-terminal">
+    <div class="nav-item active" id="nav-0"><div class="nav-dot"></div> <span>00_ACCESO</span></div>
+    <div class="nav-item" id="nav-1"><div class="nav-dot"></div> <span>01_DIMENSIÓN</span></div>
+    <div class="nav-item" id="nav-2"><div class="nav-dot"></div> <span>02_DESAFÍO</span></div>
+    <div class="nav-item" id="nav-3"><div class="nav-dot"></div> <span>03_RESULTADOS</span></div>
+</nav>
+
+<div class="shell">
+
+    <!-- ══ SCREEN 0: INTRO ══ -->
+    <div id="screen-intro" class="min-h-screen flex flex-col justify-center fade-in">
+        <span class="text-red-500 font-mono text-sm tracking-[5px] mb-4">SISTEMA RESTRINGIDO · EID v.2026</span>
+        <h1 class="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-none">ESCAPE <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">INDICATIVO</span></h1>
+        <p class="text-lg md:text-xl text-slate-400 max-w-2xl mb-10 leading-relaxed italic">Estás atrapado en la inercia administrativa. Solo el dominio de los estándares EID te permitirá abrir los candados y liderar la mejora en el Valle Diguillín.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl">
+            <button onclick="selectDimension('Liderazgo')" class="glass p-6 text-left hover:border-blue-400 transition-all group">
+                <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">🏛️</div>
+                <h3 class="font-bold text-blue-400">Liderazgo</h3>
+                <p class="text-xs text-slate-500 mt-1">Conducción, visión estratégica y metas.</p>
+            </button>
+            <button onclick="selectDimension('Gestión Pedagógica')" class="glass p-6 text-left hover:border-green-400 transition-all group">
+                <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">📚</div>
+                <h3 class="font-bold text-green-400">Gestión Pedagógica</h3>
+                <p class="text-xs text-slate-500 mt-1">Currículum, enseñanza y resultados.</p>
+            </button>
+            <button onclick="selectDimension('Formación y Convivencia')" class="glass p-6 text-left hover:border-purple-400 transition-all group">
+                <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">🤝</div>
+                <h3 class="font-bold text-purple-400">Formación y Convivencia</h3>
+                <p class="text-xs text-slate-500 mt-1">Clima, inclusión y participación.</p>
+            </button>
+            <button onclick="selectDimension('Gestión de Recursos')" class="glass p-6 text-left hover:border-orange-400 transition-all group">
+                <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">⚙️</div>
+                <h3 class="font-bold text-orange-400">Gestión de Recursos</h3>
+                <p class="text-xs text-slate-500 mt-1">SEP, RRHH e infraestructura.</p>
+            </button>
+        </div>
+    </div>
+
+    <!-- ══ SCREEN 1: GAME ══ -->
+    <div id="screen-game" class="hidden min-h-screen pt-20">
+        <header class="flex justify-between items-center mb-10 pb-4 border-b border-white/10">
+            <div>
+                <span class="text-[10px] text-slate-500 uppercase tracking-widest">Dimensión Actual</span>
+                <h2 id="display-dim" class="text-2xl font-bold text-neon">---</h2>
+                <p id="display-level" class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Nivel 1</p>
+            </div>
+            <div class="text-right">
+                <span class="text-[10px] text-slate-500 uppercase tracking-widest">Progreso Misión</span>
+                <div id="progress-dots" class="flex gap-2 mt-1">
+                    <!-- Dots dinámicos -->
+                </div>
+            </div>
+        </header>
+
+        <div id="challenge-container" class="space-y-8 fade-in">
+            <!-- Pregunta dinámica -->
+        </div>
+    </div>
+
+    <!-- ══ SCREEN 2: DEBRIEF ══ -->
+    <div id="screen-debrief" class="hidden min-h-screen py-20 fade-in">
+        <div class="text-center mb-12">
+            <h2 class="text-5xl font-black mb-4">MISIÓN <span id="mission-status" class="text-green-400">COMPLETADA</span></h2>
+            <p class="text-slate-400">Has procesado los datos técnicos del establecimiento.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div class="glass p-8 border-l-4 border-neon">
+                <h3 class="text-xl font-bold mb-4">Análisis de Pericia</h3>
+                <p id="pericia-feedback" class="text-slate-300 leading-relaxed"></p>
+            </div>
+            <div class="glass p-8 border-l-4 border-blue-400">
+                <h3 class="text-xl font-bold mb-4 italic">Reflexión MDC</h3>
+                <p class="text-slate-300">"El asesor no entrega el plan hecho; facilita que el director encuentre el estándar mediante la pregunta."</p>
+                <div class="mt-6 flex flex-wrap gap-2">
+                    <span class="badge-eid">#InstalarCapacidades</span>
+                    <span class="badge-eid">#LiderazgoDistribuido</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-center gap-4">
+            <button onclick="resetGame()" class="btn-action px-10 py-4 rounded-full font-bold uppercase tracking-widest text-white">Nuevos Desafíos ↺</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════
+   BANCO DE CASOS (BASE, NIVEL 1)
+═══════════════════════════════════════ */
+const MASTER_BANK = {
+    "Liderazgo": [
+        {
+            escuela: "Liceo Bicentenario 'El Caleuche'",
+            problema: "El equipo directivo tiene un PME con 45 acciones, pero el 80% de la comunidad escolar no conoce el PEI ni los sellos educativos.",
+            pregunta: "¿Qué estándar del EID se está vulnerando prioritariamente?",
+            opciones: [
+                "1.1 Visión estratégica y compartida",
+                "2.2 Monitoreo y seguimiento del PME",
+                "10.5 Clima laboral positivo",
+                "3.1 Uso de datos educativos"
+            ],
+            ok: 0,
+            feedback: "El estándar 1.1 exige que la visión y los sellos del PEI sean conocidos y compartidos por toda la comunidad educativa."
+        },
+        {
+            escuela: "Escuela Básica 'La Pincoya'",
+            problema: "El Director toma decisiones presupuestarias solo, sin informar al Consejo Escolar ni considerar las metas pedagógicas del año.",
+            pregunta: "Asocia esta falta de gestión con la subdimensión correcta:",
+            opciones: [
+                "Liderazgo del Director",
+                "Planificación y gestión de resultados",
+                "Información y análisis de resultados",
+                "Gestión de recursos financieros"
+            ],
+            ok: 1,
+            feedback: "La subdimensión Planificación y gestión estratégica exige que los recursos se alineen con metas pedagógicas y se gestionen con participación."
+        },
+        {
+            escuela: "Colegio Polivalente 'Moai'",
+            problema: "No existen registros de actas de las reuniones de equipo directivo, por lo que no se puede realizar seguimiento a los acuerdos tomados.",
+            pregunta: "¿Cuál es el estándar de desempeño afectado?",
+            opciones: [
+                "1.3 Conducción de la escuela e instalación de prácticas",
+                "4.1 Cobertura curricular",
+                "11.2 Presupuesto y sustentabilidad",
+                "1.4 Responsabilización y rendición de cuentas"
+            ],
+            ok: 0,
+            feedback: "El estándar 1.3 exige instalar rutinas y sistemas de registro que permitan dar continuidad y seguimiento a las decisiones."
+        },
+        {
+            escuela: "Liceo Industrial 'Araucaria'",
+            problema: "El director asume todas las tareas administrativas y no delega responsabilidades, sobrecargándose y retrasando procesos clave.",
+            pregunta: "¿Qué estándar de Liderazgo se requiere fortalecer?",
+            opciones: [
+                "1.2 Desarrollo de capacidades y liderazgo distribuido",
+                "3.1 Cultura de uso de datos",
+                "2.1 Diseño del PME",
+                "10.1 Gestión del personal"
+            ],
+            ok: 0,
+            feedback: "El estándar 1.2 plantea que el director debe desarrollar capacidades y distribuir el liderazgo para sostener la mejora."
+        },
+        {
+            escuela: "Escuela 'Valle del Sol'",
+            problema: "Se realizan evaluaciones SIMCE y DIA, pero los resultados solo se archivan y nunca se discuten en el Consejo de Profesores.",
+            pregunta: "¿Qué práctica directiva falta por consolidar?",
+            opciones: [
+                "2.2 Monitoreo de metas",
+                "3.1 Uso de datos para la toma de decisiones",
+                "4.3 Evaluación de aprendizajes",
+                "1.1 Difusión del PEI"
+            ],
+            ok: 1,
+            feedback: "El estándar 3.1 exige una cultura de uso de datos: analizar resultados en equipo para orientar decisiones pedagógicas."
+        }
+    ],
+    "Gestión Pedagógica": [
+        {
+            escuela: "Liceo 'Mano de Piedra' Durán",
+            problema: "Los docentes entregan planificaciones, pero la UTP no realiza observaciones de aula ni entrega retroalimentación sistemática.",
+            pregunta: "Identifica el estándar vulnerado según el EID:",
+            opciones: [
+                "4.2 Planificación de la enseñanza",
+                "5.1 Estrategias de enseñanza",
+                "5.5 Acompañamiento al aula y retroalimentación",
+                "6.1 Apoyo a NEE"
+            ],
+            ok: 2,
+            feedback: "El estándar 5.5 indica que el equipo directivo debe observar clases y retroalimentar sistemáticamente para mejorar la enseñanza."
+        },
+        {
+            escuela: "Escuela Rural 'Condorito'",
+            problema: "Los resultados DIA muestran que el 60% de los estudiantes no logra los OA en lectura, pero los docentes siguen avanzando en el libro sin ajustes.",
+            pregunta: "¿Qué práctica de Gestión Curricular falta instalar?",
+            opciones: [
+                "Cobertura Curricular (4.1)",
+                "Evaluación de Aprendizajes y uso pedagógico (4.3)",
+                "Articulación entre niveles (4.4)",
+                "Ambiente para el aprendizaje (5.2)"
+            ],
+            ok: 1,
+            feedback: "El estándar 4.3 obliga a usar los resultados de evaluación para ajustar la enseñanza y remediar brechas a tiempo."
+        },
+        {
+            escuela: "Colegio 'Los Copihues'",
+            problema: "Los profesores de 8° básico y 1° medio no se reúnen a coordinar contenidos, provocando un choque académico fuerte en los estudiantes.",
+            pregunta: "¿A qué estándar apunta esta necesidad?",
+            opciones: [
+                "4.1 Implementación curricular",
+                "4.4 Articulación curricular y transición",
+                "6.3 Apoyo psicosocial",
+                "5.3 Clima de aula"
+            ],
+            ok: 1,
+            feedback: "El estándar 4.4 aborda la articulación curricular y la transición entre niveles y ciclos."
+        },
+        {
+            escuela: "Escuela Básica 'El Roble'",
+            problema: "El clima dentro de las salas de clase es caótico; los docentes destinan más de la mitad del tiempo a intentar mantener el orden.",
+            pregunta: "¿Qué estándar de Enseñanza se debe abordar urgentemente?",
+            opciones: [
+                "5.2 Ambiente y clima de aula",
+                "4.2 Planificación",
+                "6.1 Estudiantes con rezago",
+                "5.4 Uso del tiempo lectivo"
+            ],
+            ok: 0,
+            feedback: "El estándar 5.2 exige que los docentes generen un ambiente ordenado, respetuoso y propicio para el aprendizaje."
+        },
+        {
+            escuela: "Liceo Artístico 'Violeta'",
+            problema: "En una clase de matemáticas, la profesora utiliza el mismo método expositivo para todos, sin considerar a estudiantes PIE.",
+            pregunta: "¿Qué aspecto de la gestión pedagógica está ausente?",
+            opciones: [
+                "4.1 Cobertura curricular",
+                "6.2 Orientación vocacional",
+                "5.1 Estrategias de enseñanza diversificadas",
+                "4.3 Sistemas de evaluación"
+            ],
+            ok: 2,
+            feedback: "El estándar 5.1 demanda estrategias diversificadas (DUA) para responder a las distintas necesidades de los estudiantes."
+        }
+    ],
+    "Formación y Convivencia": [
+        {
+            escuela: "Instituto 'Don Chuma'",
+            problema: "Se aplican sanciones por disciplina, pero el colegio no cuenta con un Plan de Formación Ciudadana ni promueve valores transversales.",
+            pregunta: "Asocia el problema a la subdimensión EID correspondiente:",
+            opciones: [
+                "Convivencia Escolar",
+                "Formación integral y valórica",
+                "Participación y vida democrática",
+                "Apoyo al desarrollo estudiantil"
+            ],
+            ok: 1,
+            feedback: "La subdimensión Formación integra estándares sobre formación ética, ciudadana y valórica alineada al PEI."
+        },
+        {
+            escuela: "Liceo 'La Tirana'",
+            problema: "Ocurrió un caso grave de ciberacoso y los docentes no supieron qué hacer porque el Protocolo de Actuación lleva 5 años sin actualizarse.",
+            pregunta: "¿Qué estándar se encuentra en nivel incipiente?",
+            opciones: [
+                "8.1 Gestión de la convivencia escolar",
+                "9.1 Participación de apoderados",
+                "7.1 Desarrollo personal y social",
+                "8.2 Prevención y protocolos de actuación"
+            ],
+            ok: 3,
+            feedback: "El estándar 8.2 exige contar con estrategias preventivas y protocolos de actuación actualizados y conocidos."
+        },
+        {
+            escuela: "Escuela 'Huasos de Algorta'",
+            problema: "El Centro de Padres (CGPA) y el Centro de Alumnos (CCAA) existen en el papel, pero el director nunca los convoca ni toma en cuenta sus opiniones.",
+            pregunta: "¿A qué estándar afecta esta práctica directiva?",
+            opciones: [
+                "9.1 Participación de la comunidad",
+                "8.1 Clima escolar",
+                "7.3 Inclusión y diversidad",
+                "10.2 Evaluación del personal"
+            ],
+            ok: 0,
+            feedback: "El estándar 9.1 señala que se deben generar instancias reales de participación de todos los estamentos."
+        },
+        {
+            escuela: "Colegio 'Norte Grande'",
+            problema: "Ha aumentado la matrícula de estudiantes extranjeros, pero la escuela no tiene ninguna iniciativa para integrar sus culturas o prevenir la discriminación.",
+            pregunta: "¿Qué estándar de Formación y Convivencia se debe movilizar?",
+            opciones: [
+                "7.1 Hábitos de vida saludable",
+                "8.2 Reglamentos internos",
+                "7.3 Promoción de la inclusión y valoración de la diversidad",
+                "9.2 Vida democrática"
+            ],
+            ok: 2,
+            feedback: "El estándar 7.3 aborda la inclusión y la valoración de la diversidad, evitando prácticas discriminatorias."
+        },
+        {
+            escuela: "Liceo 'Sur Austral'",
+            problema: "Los estudiantes de 4to medio manifiestan alta ansiedad y desmotivación, ya que la escuela no ofrece programas de orientación para su futuro.",
+            pregunta: "¿Qué estándar de la Dimensión de Formación está débil?",
+            opciones: [
+                "6.2 Orientación vocacional y proyecto de vida",
+                "7.2 Formación ciudadana",
+                "8.1 Normas de convivencia",
+                "9.1 Vínculo con la familia"
+            ],
+            ok: 0,
+            feedback: "El estándar 6.2 (desde Apoyo al desarrollo) se vincula con orientar vocacionalmente y acompañar el proyecto de vida."
+        }
+    ],
+    "Gestión de Recursos": [
+        {
+            escuela: "Escuela 'Los Volcanes'",
+            problema: "Hay tablets compradas hace 2 años con fondos SEP que nunca se han usado porque no existe un protocolo de uso ni capacitación a docentes.",
+            pregunta: "¿Qué estándar de Gestión de Recursos falla aquí?",
+            opciones: [
+                "12.1 Infraestructura segura",
+                "12.2 Gestión de recursos didácticos y tecnológicos",
+                "12.3 Biblioteca CRA",
+                "11.3 Cumplimiento normativo"
+            ],
+            ok: 1,
+            feedback: "El estándar 12.2 no solo pide adquirir recursos, sino gestionarlos para que se usen pedagógicamente."
+        },
+        {
+            escuela: "Liceo Comercial 'El Peso'",
+            problema: "Al llegar diciembre, la escuela descubre que tiene el 60% de los fondos SEP sin ejecutar, arriesgando reintegros al Ministerio.",
+            pregunta: "Identifica la subdimensión con problemas críticos:",
+            opciones: [
+                "Gestión de personal",
+                "Gestión de recursos educativos",
+                "Gestión financiera y administrativa",
+                "Liderazgo del sostenedor"
+            ],
+            ok: 2,
+            feedback: "La subdimensión Gestión financiera y administrativa exige uso oportuno y planificado de los recursos como SEP."
+        },
+        {
+            escuela: "Colegio 'Los Alerces'",
+            problema: "El colegio contrató a un profesor de música para hacer clases de matemáticas debido a la escasez, sin acompañamiento para su nivelación.",
+            pregunta: "¿Qué estándar de Gestión de Personal se ha vulnerado?",
+            opciones: [
+                "10.1 Perfiles, selección y asignación de funciones",
+                "11.1 Gestión administrativa",
+                "10.4 Buen trato laboral",
+                "12.1 Mantenimiento de espacios"
+            ],
+            ok: 0,
+            feedback: "El estándar 10.1 se refiere a contar con perfiles claros y asignar funciones acordes a las competencias."
+        },
+        {
+            escuela: "Escuela Básica 'Desierto Florido'",
+            problema: "Los docentes se quejan de que no hay instancias formales para aprender nuevas metodologías ni perfeccionamiento financiado por el colegio.",
+            pregunta: "¿A qué estándar apunta esta demanda?",
+            opciones: [
+                "10.2 Evaluación de desempeño",
+                "10.3 Desarrollo profesional y capacitación",
+                "11.2 Presupuesto",
+                "1.2 Liderazgo distribuido"
+            ],
+            ok: 1,
+            feedback: "El estándar 10.3 establece que el establecimiento debe promover y facilitar el desarrollo profesional continuo."
+        },
+        {
+            escuela: "Instituto 'Cordillera'",
+            problema: "Los baños de los estudiantes tienen llaves rotas desde hace meses y las salas no cuentan con estufas en pleno invierno austral.",
+            pregunta: "¿Cuál es el estándar que el Sostenedor y Director deben resolver urgente?",
+            opciones: [
+                "12.2 Recursos tecnológicos",
+                "11.3 Normativa laboral",
+                "10.5 Clima organizacional",
+                "12.1 Infraestructura, equipamiento y seguridad"
+            ],
+            ok: 3,
+            feedback: "El estándar 12.1 es clave para asegurar condiciones básicas, seguras y dignas en los espacios físicos."
+        }
+    ]
+};
+
+/* Añadimos una clave estándar normalizada a cada caso (la alternativa correcta) */
+Object.keys(MASTER_BANK).forEach(dim => {
+    MASTER_BANK[dim].forEach(c => {
+        c.standardKey = c.opciones[c.ok];
+    });
+});
+
+/* ═══════════════════════════════════════
+   DESCRIPTORES DE ESTÁNDARES (NIVEL 3)
+═══════════════════════════════════════ */
+const STANDARD_DESCRIPTORS = {
+    "1.1 Visión estratégica y compartida": {
+        pregunta: "Según el estándar 1.1, ¿cuál descriptor refleja mejor una práctica instalada?",
+        opciones: [
+            "El PEI está archivado en secretaría y se revisa solo para la acreditación.",
+            "La visión y sellos del PEI se comunican y se usan para orientar decisiones y proyectos.",
+            "El director delega todas las decisiones en la UTP.",
+            "La escuela solo prioriza resultados SIMCE por sobre otros focos."
+        ],
+        ok: 1
+    },
+    "1.3 Conducción de la escuela e instalación de prácticas": {
+        pregunta: "¿Qué descriptor se alinea mejor con el estándar 1.3?",
+        opciones: [
+            "Se realizan reuniones esporádicas sin acuerdos escritos.",
+            "El director instala rutinas y registros que permiten seguimiento sistemático de acuerdos.",
+            "Los docentes deciden individualmente qué prácticas aplicar.",
+            "Solo el sostenedor define las prioridades de la escuela."
+        ],
+        ok: 1
+    },
+    "1.2 Desarrollo de capacidades y liderazgo distribuido": {
+        pregunta: "En el estándar 1.2, ¿qué práctica describe mejor el liderazgo distribuido?",
+        opciones: [
+            "El director concentra todas las decisiones relevantes.",
+            "Se crean cargos, pero sin claridad de funciones.",
+            "Se conforman equipos de trabajo con responsabilidades claras y autonomía progresiva.",
+            "Se contrata asesoría externa para reemplazar al equipo interno."
+        ],
+        ok: 2
+    },
+    "3.1 Uso de datos para la toma de decisiones": {
+        pregunta: "Un descriptor propio del estándar 3.1 es:",
+        opciones: [
+            "Aplicar evaluaciones, pero no sistematizar los resultados.",
+            "Analizar resultados en equipo y tomar decisiones pedagógicas en base a ellos.",
+            "Publicar solo los resultados positivos en redes sociales.",
+            "Guardar los informes de evaluación en una carpeta física."
+        ],
+        ok: 1
+    },
+    "5.5 Acompañamiento al aula y retroalimentación": {
+        pregunta: "¿Qué práctica corresponde a un descriptor del estándar 5.5?",
+        opciones: [
+            "La UTP revisa solo las planificaciones escritas.",
+            "Se aplican encuestas de satisfacción a estudiantes una vez al año.",
+            "La dirección observa sistemáticamente clases y retroalimenta a los docentes.",
+            "Los docentes se autoevalúan sin acompañamiento externo."
+        ],
+        ok: 2
+    },
+    "Evaluación de Aprendizajes y uso pedagógico (4.3)": {
+        pregunta: "¿Cuál de las siguientes acciones responde al estándar 4.3?",
+        opciones: [
+            "Aplicar pruebas estandarizadas sin analizarlas.",
+            "Revisar calificaciones solo al final de semestre.",
+            "Analizar resultados de evaluaciones y ajustar la enseñanza en función de ellos.",
+            "Registrar notas en el libro de clases puntualmente."
+        ],
+        ok: 2
+    },
+    "4.4 Articulación curricular y transición": {
+        pregunta: "En el estándar 4.4, un descriptor adecuado sería:",
+        opciones: [
+            "Cada docente planifica sin considerar otros niveles.",
+            "Se coordina entre niveles qué contenidos priorizar y cómo apoyar la transición de los estudiantes.",
+            "Se repiten las mismas unidades en 8° y 1° medio.",
+            "El cambio de nivel es solo administrativo."
+        ],
+        ok: 1
+    },
+    "5.2 Ambiente y clima de aula": {
+        pregunta: "¿Qué descriptor se alinea mejor con el estándar 5.2?",
+        opciones: [
+            "El docente permite insultos entre estudiantes si cumplen con las tareas.",
+            "Se establece un clima de respeto, normas claras y alta expectativa por el aprendizaje.",
+            "Se prioriza terminar el contenido por sobre el respeto.",
+            "La disciplina depende solo del inspector general."
+        ],
+        ok: 1
+    },
+    "5.1 Estrategias de enseñanza diversificadas": {
+        pregunta: "En relación con el estándar 5.1, ¿cuál es un descriptor clave?",
+        opciones: [
+            "El docente utiliza siempre la misma explicación magistral.",
+            "El docente diversifica métodos y recursos según necesidades y estilos de aprendizaje.",
+            "Se prohíbe el trabajo en grupo.",
+            "Se usa solo el libro de texto oficial."
+        ],
+        ok: 1
+    },
+    "Formación integral y valórica": {
+        pregunta: "Un descriptor coherente con la subdimensión Formación integral y valórica es:",
+        opciones: [
+            "Solo se enseña el currículum disciplinar.",
+            "Se implementan acciones aisladas sin relación con el PEI.",
+            "Se desarrollan experiencias planificadas que promueven valores y ciudadanía de forma transversal.",
+            "Se delega la formación valórica exclusivamente a la familia."
+        ],
+        ok: 2
+    },
+    "8.2 Prevención y protocolos de actuación": {
+        pregunta: "¿Qué evidencia se asocia al estándar 8.2?",
+        opciones: [
+            "Existencia de un protocolo de convivencia desactualizado.",
+            "Protocolos actualizados, conocidos por la comunidad y aplicados ante situaciones de riesgo.",
+            "Solo sancionar según criterio del director.",
+            "Evitar hablar de conflictos para no alarmar."
+        ],
+        ok: 1
+    },
+    "9.1 Participación de la comunidad": {
+        pregunta: "Selecciona el descriptor más coherente con el estándar 9.1:",
+        opciones: [
+            "Los centros de padres y estudiantes existen solo en el papel.",
+            "El director convoca y escucha activamente a los centros de padres y estudiantes en decisiones relevantes.",
+            "La escuela se comunica solo por circulares impresas.",
+            "Las reuniones son solo informativas."
+        ],
+        ok: 1
+    },
+    "7.3 Promoción de la inclusión y valoración de la diversidad": {
+        pregunta: "¿Qué acción refleja un descriptor de inclusión y diversidad (7.3)?",
+        opciones: [
+            "Asignar a estudiantes migrantes a cursos separados.",
+            "Ignorar diferencias culturales para 'tratar a todos por igual'.",
+            "Visibilizar y valorar distintas culturas en actividades, evitando la discriminación.",
+            "Expulsar a quien discrimine sin trabajar el tema."
+        ],
+        ok: 2
+    },
+    "6.2 Orientación vocacional y proyecto de vida": {
+        pregunta: "En el estándar 6.2, ¿qué descriptor es correcto?",
+        opciones: [
+            "Los estudiantes se informan solos sobre opciones postsecundarias.",
+            "La escuela organiza acciones sistemáticas de orientación vocacional y proyecto de vida por nivel.",
+            "Solo se aplica un test vocacional en 4° medio.",
+            "La orientación se limita a entregar trípticos informativos."
+        ],
+        ok: 1
+    },
+    "12.2 Gestión de recursos didácticos y tecnológicos": {
+        pregunta: "¿Qué evidencia se asocia al estándar 12.2?",
+        opciones: [
+            "Adquirir recursos tecnológicos y mantenerlos guardados.",
+            "Permitir que los estudiantes usen dispositivos solo en recreos.",
+            "Planificar el uso pedagógico de recursos tecnológicos en las clases y monitorear su impacto.",
+            "Dejar la gestión de recursos a cargo del inspector."
+        ],
+        ok: 2
+    },
+    "Gestión financiera y administrativa": {
+        pregunta: "Un descriptor coherente con Gestión financiera y administrativa es:",
+        opciones: [
+            "Ejecutar el presupuesto sin considerar el PME.",
+            "Subejecutar permanentemente los recursos por falta de planificación.",
+            "Planificar y ejecutar los recursos de manera oportuna, alineada al PME y rendida según normativa.",
+            "Gastar los recursos solo al final del año."
+        ],
+        ok: 2
+    },
+    "10.1 Perfiles, selección y asignación de funciones": {
+        pregunta: "¿Qué práctica responde al estándar 10.1?",
+        opciones: [
+            "Asignar cualquier profesor a cualquier asignatura por disponibilidad.",
+            "Definir perfiles de cargo y asignar funciones según competencias y formación.",
+            "Contratar por recomendación informal.",
+            "Cambiar docentes de asignatura cada mes."
+        ],
+        ok: 1
+    },
+    "10.3 Desarrollo profesional y capacitación": {
+        pregunta: "¿Cuál es un descriptor de desarrollo profesional (10.3)?",
+        opciones: [
+            "No planificar capacitaciones.",
+            "Ofrecer talleres sin relación con necesidades detectadas.",
+            "Diseñar un plan de formación continua basado en brechas y resultados.",
+            "Enviar a todos al mismo curso sin diagnóstico previo."
+        ],
+        ok: 2
+    },
+    "12.1 Infraestructura, equipamiento y seguridad": {
+        pregunta: "Un descriptor clave del estándar 12.1 sería:",
+        opciones: [
+            "Postergar mantenciones hasta que los espacios sean inutilizables.",
+            "Gestionar mantención y mejoramiento de espacios para garantizar condiciones seguras y dignas.",
+            "Solo pintar la fachada para visitas oficiales.",
+            "Responsabilizar a estudiantes por los daños estructurales."
+        ],
+        ok: 1
+    }
+};
+
+/* ═══════════════════════════════════════
+   ESTADO DEL JUEGO Y NIVELES
+═══════════════════════════════════════ */
+let selectedDimension = "";
+let sessionChallenges = [];
+let currentStep = 0;
+let score = 0;
+let isAnswered = false;
+let playerLevel = 1; // 1 a 4
+
+/* Utilidad: barajar arreglos */
+function shuffleArray(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+/* ═══════════════════════════════════════
+   GENERACIÓN DE DESAFÍOS POR NIVEL
+═══════════════════════════════════════ */
+
+function generateSession(pool) {
+    const shuffled = shuffleArray(pool);
+    const selected = shuffled.slice(0, 5);
+    return selected.map(c => buildChallengeByLevel(c));
+}
+
+function buildChallengeByLevel(caseData) {
+    // Nivel 1: tal como en el banco base
+    if (playerLevel === 1) {
+        return { ...caseData };
+    }
+
+    // Nivel 2: discriminar entre estándares similares de la MISMA dimensión
+    if (playerLevel === 2) {
+        return buildDiscriminationLevel(caseData);
+    }
+
+    // Nivel 3: trabajar a nivel de descriptor técnico del estándar (si existe)
+    if (playerLevel === 3) {
+        const descEntry = STANDARD_DESCRIPTORS[caseData.standardKey];
+        if (descEntry) {
+            return buildDescriptorLevel(caseData, descEntry);
+        } else {
+            // Si no tenemos descriptor definido, caemos a nivel 2
+            return buildDiscriminationLevel(caseData);
+        }
+    }
+
+    // Nivel 4: caso híbrido, priorización estratégica
+    if (playerLevel === 4) {
+        return buildHybridLevel(caseData);
+    }
+
+    return { ...caseData };
+}
+
+function buildDiscriminationLevel(c) {
+    // Tomar otros estándares correctos de la misma dimensión como distractores
+    const dimCases = MASTER_BANK[selectedDimension] || [];
+    let distractors = dimCases
+        .map(cc => cc.standardKey)
+        .filter(sk => sk !== c.standardKey);
+
+    if (distractors.length < 3) {
+        distractors = distractors.concat(distractors); // redundancia si hay pocos
+    }
+    distractors = shuffleArray(distractors).slice(0, 3);
+
+    const opciones = shuffleArray([...distractors, c.standardKey]);
+
+    return {
+        escuela: c.escuela,
+        problema: c.problema,
+        pregunta: c.pregunta + " (Todas parecen cercanas, selecciona la opción MÁS precisa según el EID).",
+        opciones,
+        ok: opciones.indexOf(c.standardKey),
+        feedback: c.feedback + " En este nivel se espera que distingas entre estándares muy próximos."
+    };
+}
+
+function buildDescriptorLevel(c, descEntry) {
+    return {
+        escuela: c.escuela,
+        problema: c.problema,
+        pregunta: descEntry.pregunta,
+        opciones: descEntry.opciones,
+        ok: descEntry.ok,
+        feedback: c.feedback + " Además, este descriptor concreta la práctica que deberías observar en terreno."
+    };
+}
+
+function buildHybridLevel(c) {
+    // Sacamos distractores de TODAS las dimensiones para forzar priorización
+    const allCases = Object.values(MASTER_BANK).flat();
+    let candidates = allCases
+        .map(x => x.standardKey)
+        .filter(sk => sk !== c.standardKey);
+
+    candidates = shuffleArray(candidates).slice(0, 3);
+    const opciones = shuffleArray([...candidates, c.standardKey]);
+
+    return {
+        escuela: c.escuela,
+        problema: c.problema + " Además, la dirección reconoce múltiples problemas y pide priorizar por dónde comenzar.",
+        pregunta: "Varias dimensiones parecen afectadas. Según el EID, ¿cuál es el estándar PRIORITARIO a intervenir?",
+        opciones,
+        ok: opciones.indexOf(c.standardKey),
+        feedback: c.feedback + " En nivel experto, la pericia consiste en identificar la causa raíz y priorizar el estándar correcto."
+    };
+}
+
+/* ═══════════════════════════════════════
+   LÓGICA DE INTERFAZ Y FLUJO
+═══════════════════════════════════════ */
+
+function updateNav(step) {
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    const el = document.getElementById(`nav-${step}`);
+    if (el) el.classList.add('active');
+}
+
+function updateLevelDisplay() {
+    const el = document.getElementById('display-level');
+    if (el) el.innerText = `Nivel ${playerLevel}`;
+}
+
+function selectDimension(dim) {
+    selectedDimension = dim;
+    const pool = MASTER_BANK[dim] || [];
+
+    sessionChallenges = generateSession(pool);
+    
+    document.getElementById('screen-intro').classList.add('hidden');
+    document.getElementById('screen-game').classList.remove('hidden');
+    document.getElementById('display-dim').innerText = dim.toUpperCase();
+    updateLevelDisplay();
+    
+    updateNav(1);
+    initGame();
+}
+
+function initGame() {
+    score = 0;
+    currentStep = 0;
+    renderProgress();
+    loadChallenge();
+}
+
+function renderProgress() {
+    const container = document.getElementById('progress-dots');
+    container.innerHTML = '';
+    for (let i = 0; i < sessionChallenges.length; i++) {
+        const dot = document.createElement('div');
+        dot.className = `w-3 h-3 rounded-full border border-white/20 transition-colors duration-500 ${i < currentStep ? 'bg-green-400' : 'bg-slate-800'}`;
+        container.appendChild(dot);
+    }
+}
+
+function loadChallenge() {
+    if (currentStep >= sessionChallenges.length) {
+        finishMission();
+        return;
+    }
+
+    isAnswered = false;
+    const c = sessionChallenges[currentStep];
+    const container = document.getElementById('challenge-container');
+    updateNav(2);
+
+    container.innerHTML = `
+        <div class="glass p-8 border-l-4 border-blue-500 shadow-2xl fade-in">
+            <span class="text-[10px] font-mono text-blue-400 uppercase tracking-widest">Expediente #${currentStep + 1} de ${sessionChallenges.length}</span>
+            <h3 class="text-xl font-bold mt-2 text-white">${c.escuela}</h3>
+            <p class="text-slate-400 mt-4 leading-relaxed">"${c.problema}"</p>
+        </div>
+
+        <div class="space-y-4 fade-in" style="animation-delay: 0.1s">
+            <h4 class="text-lg font-bold text-neon mb-4">${c.pregunta}</h4>
+            <div class="grid grid-cols-1 gap-3" id="options-grid">
+                ${c.opciones.map((opt, i) => `
+                    <button onclick="checkAnswer(${i}, this)" class="opt-card p-5 rounded-xl text-left group w-full">
+                        <span class="w-8 h-8 rounded bg-slate-800 flex-shrink-0 flex items-center justify-center font-mono text-xs group-hover:bg-blue-600 transition-colors">${String.fromCharCode(65 + i)}</span>
+                        <span class="text-sm font-medium text-slate-300 group-hover:text-white">${opt}</span>
+                    </button>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+function checkAnswer(idx, btnElement) {
+    if (isAnswered) return;
+    isAnswered = true;
+
+    const challenge = sessionChallenges[currentStep];
+    const btns = document.querySelectorAll('.opt-card');
+    
+    btns.forEach(btn => btn.classList.add('disabled'));
+
+    if (idx === challenge.ok) {
+        btnElement.classList.add('correct');
+        score++;
+        showFeedback("¡Correcto! " + challenge.feedback, true);
+    } else {
+        btnElement.classList.add('wrong');
+        if (btns[challenge.ok]) {
+            btns[challenge.ok].classList.add('correct');
+        }
+        showFeedback("Hallazgo incorrecto. " + challenge.feedback, false);
+    }
+}
+
+function showFeedback(text, isOk) {
+    const container = document.getElementById('challenge-container');
+    const fb = document.createElement('div');
+    fb.className = `glass p-6 mt-6 border-l-4 ${isOk ? 'border-green-500' : 'border-red-500'} fade-in`;
+    fb.innerHTML = `
+        <p class="text-sm italic text-slate-200">"${text}"</p>
+        <button onclick="nextStep()" class="mt-6 bg-slate-800 hover:bg-slate-700 px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all text-white">
+            Siguiente Caso <i class="fa-solid fa-chevron-right ml-2"></i>
+        </button>
+    `;
+    container.appendChild(fb);
+    fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function nextStep() {
+    currentStep++;
+    renderProgress();
+    loadChallenge();
+}
+
+function finishMission() {
+    document.getElementById('screen-game').classList.add('hidden');
+    document.getElementById('screen-debrief').classList.remove('hidden');
+    updateNav(3);
+
+    const feedbackEl = document.getElementById('pericia-feedback');
+    const statusEl = document.getElementById('mission-status');
+
+    const total = sessionChallenges.length;
+    const approvalThreshold = Math.ceil(total * 0.8); // 80%
+    const prevLevel = playerLevel;
+
+    if (score >= approvalThreshold) {
+        statusEl.innerText = "ÉXITO TOTAL";
+        statusEl.className = "text-green-400";
+        playerLevel = Math.min(playerLevel + 1, 4);
+        feedbackEl.innerText = `Has resuelto ${score} de ${total} casos correctamente en nivel ${prevLevel}. Tu pericia en "${selectedDimension}" progresa al nivel ${playerLevel}. Puedes abordar casos con mayor complejidad técnica del EID.`;
+    } else {
+        statusEl.innerText = "NIVEL EN DESARROLLO";
+        statusEl.className = "text-orange-400";
+        feedbackEl.innerText = `Has obtenido ${score} de ${total} en nivel ${prevLevel}. Se recomienda revisar los descriptores de los Estándares Indicativos de la dimensión "${selectedDimension}" antes de pasar a niveles superiores. Mantendrás tu nivel actual (${playerLevel}).`;
+    }
+
+    updateLevelDisplay();
+}
+
+function resetGame() {
+    document.getElementById('screen-debrief').classList.add('hidden');
+    document.getElementById('screen-intro').classList.remove('hidden');
+    
+    updateNav(0);
+    
+    selectedDimension = "";
+    sessionChallenges = [];
+    currentStep = 0;
+    score = 0;
+    isAnswered = false;
+    
+    document.getElementById('progress-dots').innerHTML = '';
+    document.getElementById('challenge-container').innerHTML = '';
+}
+
+/* Fondo dinámico (Canvas) */
+(()=>{
+  const c = document.getElementById('cvs'), ctx = c.getContext('2d');
+  let W, H, pts = [];
+  const resize = () => { W = c.width = innerWidth; H = c.height = innerHeight; };
+  resize(); addEventListener('resize', resize);
+  for(let i=0; i<40; i++) pts.push({x: Math.random()*100, y: Math.random()*100, vx: (Math.random()-.5)*.02, vy: (Math.random()-.5)*.02, r: Math.random()*1.2});
+  const draw = () => {
+    ctx.clearRect(0, 0, W, H);
+    pts.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if(p.x < 0) p.x = 100; if(p.x > 100) p.x = 0;
+      if(p.y < 0) p.y = 100; if(p.y > 100) p.y = 0;
+      ctx.beginPath(); ctx.arc(p.x/100*W, p.y/100*H, p.r, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(0, 212, 255, 0.2)'; ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  };
+  draw();
+})();
+</script>
+</body>
+</html>

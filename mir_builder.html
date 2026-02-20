@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PME AI Explorer | Plan de Mejoramiento Educativo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    
+    :root {
+      --bg-dark: #0f172a;
+      --card-dark: #1e293b;
+      --accent: #3b82f6;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: #f1f5f9;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .glass {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .input-pme {
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #e2e8f0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .input-pme:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      outline: none;
+      background: #1e293b;
+    }
+
+    .animate-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+  </style>
+</head>
+<body class="p-4 md:p-8 custom-scrollbar">
+
+  <div class="max-w-7xl mx-auto">
+    
+    <!-- Navegación -->
+    <a href="taller_ia_uatp_modelo_activo.html" class="inline-flex items-center text-slate-400 hover:text-blue-400 mb-6 transition-colors gap-2 text-sm">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      Volver al Centro de Mando ATP
+    </a>
+
+    <!-- Header Principal -->
+    <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div>
+        <div class="flex items-center gap-3 mb-2">
+            <span class="text-4xl">🚀</span>
+            <h1 class="text-4xl font-extrabold bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                PME AI Explorer
+            </h1>
+        </div>
+        <p class="text-slate-400 text-lg font-light italic">Laboratorio de Planificación Estratégica para el Mejoramiento Educativo</p>
+      </div>
+      <div class="flex gap-3">
+        <span class="px-4 py-1.5 rounded-full bg-blue-500/10 text-blue-400 text-xs font-semibold border border-blue-500/20 shadow-sm uppercase tracking-wider">Mineduc 2026</span>
+        <span class="px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-semibold border border-indigo-500/20 shadow-sm uppercase tracking-wider">UATP Valle Diguillín</span>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Panel Izquierdo: Formulario de Construcción -->
+      <main class="lg:col-span-8 space-y-8">
+        
+        <!-- Sección 1: Definición de Objetivos -->
+        <section class="glass p-8 rounded-3xl animate-in">
+          <div class="flex items-center gap-4 mb-6">
+            <span class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-lg font-bold shadow-lg shadow-blue-900/40">1</span>
+            <h2 class="text-2xl font-bold text-white">Componentes Estratégicos</h2>
+          </div>
+          
+          <div class="grid gap-6">
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-slate-300">Dimensión del PME</label>
+                    <select id="dimension-pme" class="input-pme w-full p-4 rounded-2xl text-sm">
+                        <option value="gestion-pedagogica">Gestión Pedagógica</option>
+                        <option value="liderazgo">Liderazgo</option>
+                        <option value="convivencia">Formación y Convivencia</option>
+                        <option value="recursos">Gestión de Recursos</option>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-slate-300">Vínculo con el Sello Educativo</label>
+                    <input type="text" id="sello" class="input-pme w-full p-4 rounded-2xl text-sm" placeholder="Ej: Calidad en los aprendizajes con afectividad y sana convivencia.">
+                </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-slate-300">Objetivo Estratégico (Periodo 4 Años)</label>
+              <textarea id="objetivo" class="input-pme w-full p-4 rounded-2xl min-h-[100px] text-sm leading-relaxed" placeholder="Pregunta guía: ¿Qué aspiran lograr en 4 años como comunidad en función del PEI?"></textarea>
+            </div>
+            
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-slate-300">Meta Anual (Impacto Esperado en el Ciclo)</label>
+              <textarea id="meta-anual" class="input-pme w-full p-4 rounded-2xl min-h-[100px] text-sm leading-relaxed" placeholder="Ej: Mejorar en forma permanente los estándares de aprendizaje a través de diversas experiencias..."></textarea>
+              <div class="flex items-center gap-2 mt-2 px-1">
+                  <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                  <p class="text-[11px] text-slate-500 font-medium uppercase tracking-widest">Tip: Inicie con un verbo en infinitivo e incluya un valor cuantificable.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Sección 2: Matriz de Acciones y Seguimiento -->
+        <section class="glass p-8 rounded-3xl animate-in" style="animation-delay: 0.1s">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div class="flex items-center gap-4">
+              <span class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-lg font-bold shadow-lg shadow-indigo-900/40">2</span>
+              <h2 class="text-2xl font-bold text-white">Planificación y Monitoreo</h2>
+            </div>
+            <button onclick="addRow()" class="bg-blue-600 hover:bg-blue-500 px-6 py-2.5 rounded-2xl text-sm font-bold transition-all shadow-lg shadow-blue-900/20 active:scale-95">
+              + Nueva Estrategia / Acción
+            </button>
+          </div>
+          
+          <div class="overflow-x-auto pb-4">
+            <table class="w-full text-left border-separate border-spacing-y-4">
+              <thead>
+                <tr class="text-slate-500 text-[10px] uppercase font-bold tracking-[0.2em]">
+                  <th class="px-6 pb-2">Nombre de la Acción / Estrategia</th>
+                  <th class="px-6 pb-2">Indicadores de Proceso</th>
+                  <th class="px-6 pb-2">Medios de Verificación</th>
+                  <th class="px-6 pb-2 text-center">Gestionar</th>
+                </tr>
+              </thead>
+              <tbody id="pme-tbody">
+                <!-- Se inyecta vía JS -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Acciones de Exportación -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <button onclick="copiarTodo()" class="group bg-slate-800 hover:bg-blue-600 p-5 rounded-3xl border border-slate-700 hover:border-blue-400 transition-all duration-300 flex items-center justify-center gap-3">
+            <span class="text-xl group-hover:scale-125 transition-transform">📋</span>
+            <span class="font-bold text-slate-300 group-hover:text-white">Copiar Reporte PME</span>
+          </button>
+          <button onclick="exportarJSON()" class="group bg-slate-800 hover:bg-indigo-600 p-5 rounded-3xl border border-slate-700 hover:border-indigo-400 transition-all duration-300 flex items-center justify-center gap-3">
+            <span class="text-xl group-hover:rotate-12 transition-transform">💾</span>
+            <span class="font-bold text-slate-300 group-hover:text-white">Descargar Matriz JSON</span>
+          </button>
+        </div>
+      </main>
+
+      <!-- Panel Derecho: Asistencia Técnica IA -->
+      <aside class="lg:col-span-4 space-y-8">
+        
+        <!-- Mentor PME en Tiempo Real -->
+        <div class="glass p-8 rounded-3xl border-l-4 border-yellow-500/50 shadow-2xl relative overflow-hidden group">
+          <div class="absolute -right-4 -top-4 text-6xl opacity-10 group-hover:rotate-12 transition-transform">🤖</div>
+          <h3 class="text-lg font-bold mb-4 text-white flex items-center gap-2">
+            Mentor de Calidad PME
+          </h3>
+          <div id="ai-feedback" class="text-sm text-slate-300 leading-relaxed bg-black/20 p-4 rounded-2xl border border-white/5 italic">
+            Analizando coherencia técnica con el Sello Educativo...
+          </div>
+        </div>
+
+        <!-- Laboratorio de Prompts UATP -->
+        <div class="bg-gradient-to-br from-blue-900/40 via-indigo-900/40 to-slate-900 p-8 rounded-3xl border border-blue-500/20 shadow-xl">
+          <h3 class="text-xs font-black text-blue-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+            <span class="p-1 bg-blue-500/20 rounded">🚀</span> Generador de Insumos
+          </h3>
+          
+          <div class="space-y-4">
+            <!-- Nuevo Prompt de Coherencia Integral -->
+            <button onclick="copyPrompt('coherencia')" class="w-full text-left p-4 rounded-2xl bg-gradient-to-r from-emerald-900/40 to-emerald-600/20 hover:from-emerald-800/50 hover:to-emerald-500/40 border border-emerald-500/30 hover:border-emerald-400/60 transition-all group">
+              <span class="block text-[10px] text-emerald-400 font-bold mb-1 group-hover:text-white transition-colors">AUDITORÍA DE COHERENCIA</span>
+              <span class="text-xs text-slate-300 group-hover:text-white font-medium">Revisar alineación Sello → Objetivo → Meta → Acciones</span>
+            </button>
+
+            <button onclick="copyPrompt('indicador')" class="w-full text-left p-4 rounded-2xl bg-black/40 hover:bg-blue-600/20 border border-white/5 hover:border-blue-400/30 transition-all group">
+              <span class="block text-[10px] text-blue-400 font-bold mb-1 group-hover:text-white transition-colors">VINCULACIÓN EID</span>
+              <span class="text-xs text-slate-400 group-hover:text-slate-200">Refinar indicadores basados en Estándares Indicativos</span>
+            </button>
+
+            <button onclick="copyPrompt('acciones')" class="w-full text-left p-4 rounded-2xl bg-black/40 hover:bg-indigo-600/20 border border-white/5 hover:border-indigo-400/30 transition-all group">
+              <span class="block text-[10px] text-indigo-400 font-bold mb-1 group-hover:text-white transition-colors">ACCIONES TÁCTICAS</span>
+              <span class="text-xs text-slate-400 group-hover:text-slate-200">Desglosar meta en acciones para el Plan Anual</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Glosario Técnico Normativo -->
+        <div class="glass p-8 rounded-3xl">
+          <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mb-6">Referencia Ministerial</h3>
+          <div class="space-y-4">
+            <details class="group bg-slate-800/30 rounded-xl border border-white/5 p-3">
+              <summary class="cursor-pointer font-bold text-xs text-blue-400 flex justify-between items-center outline-none">
+                Coherencia Sistémica
+                <svg class="w-4 h-4 transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </summary>
+              <p class="mt-3 text-[11px] text-slate-400 leading-relaxed font-light">Relación lógica y vinculante entre el diagnóstico, el sello educativo, los objetivos de 4 años y las acciones anuales.</p>
+            </details>
+            <details class="group bg-slate-800/30 rounded-xl border border-white/5 p-3">
+              <summary class="cursor-pointer font-bold text-xs text-blue-400 flex justify-between items-center outline-none">
+                Sello Educativo
+                <svg class="w-4 h-4 transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </summary>
+              <p class="mt-3 text-[11px] text-slate-400 leading-relaxed font-light">Elemento que otorga identidad al PEI y que debe permear todas las acciones del PME.</p>
+            </details>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Notificaciones -->
+  <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-8 py-3 rounded-2xl shadow-2xl font-bold text-sm opacity-0 transition-all duration-300 transform translate-y-10 z-[100] pointer-events-none">
+    ✓ Acción procesada con éxito
+  </div>
+
+  <textarea id="clipboard-helper" class="fixed -left-full opacity-0"></textarea>
+
+  <script>
+    const pmeTableBody = document.getElementById('pme-tbody');
+    const aiFeedbackPanel = document.getElementById('ai-feedback');
+
+    function addRow() {
+      const tr = document.createElement('tr');
+      tr.className = "group animate-in hito-row";
+      tr.innerHTML = `
+        <td class="p-0 align-top">
+          <div class="bg-slate-800/40 p-5 rounded-l-3xl border-l border-t border-b border-slate-700/50 group-hover:bg-slate-800/60 transition-colors">
+            <input type="text" placeholder="Nombre de la Acción" class="action-name input-pme w-full p-3 text-sm rounded-xl mb-3 font-semibold">
+            <textarea placeholder="Descripción detallada de la estrategia..." class="action-desc input-pme w-full p-3 text-[11px] rounded-xl min-h-[70px] leading-relaxed"></textarea>
+          </div>
+        </td>
+        <td class="p-0 align-top">
+          <div class="bg-slate-800/40 p-5 border-t border-b border-slate-700/50 group-hover:bg-slate-800/60 transition-colors">
+            <input type="text" placeholder="Indicador (Ej: % cobertura)" class="action-ind input-pme w-full p-3 text-sm rounded-xl mb-3">
+            <input type="text" placeholder="Fórmula de seguimiento" class="action-form input-pme w-full p-3 text-[11px] rounded-xl font-mono opacity-80">
+          </div>
+        </td>
+        <td class="p-0 align-top">
+          <div class="bg-slate-800/40 p-5 border-t border-b border-slate-700/50 group-hover:bg-slate-800/60 transition-colors">
+            <textarea placeholder="Ej: Portafolios, actas de GPT..." class="action-verif input-pme w-full p-3 text-[11px] rounded-xl min-h-[100px]"></textarea>
+          </div>
+        </td>
+        <td class="p-0 align-top">
+          <div class="bg-slate-800/40 p-5 rounded-r-3xl border-r border-t border-b border-slate-700/50 group-hover:bg-slate-800/60 transition-colors flex items-center justify-center h-full min-h-[160px]">
+            <button onclick="this.closest('tr').remove()" class="p-3 text-slate-600 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all active:scale-90">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+            </button>
+          </div>
+        </td>
+      `;
+      pmeTableBody.appendChild(tr);
+    }
+
+    addRow();
+
+    /**
+     * Mentor PME: Lógica de validación alineada con Pueblo Seco
+     */
+    document.getElementById('meta-anual').addEventListener('input', (e) => {
+      const val = e.target.value.trim();
+      let feedback = "";
+
+      if (val.length < 10) {
+          feedback = "<p class='opacity-50'>Redacte el cambio esperado. ¿Quiénes, cuánto y en qué plazo?</p>";
+      } else {
+          const hasNumber = /\d+/.test(val);
+          const hasSello = /(afectividad|convivencia|clima|aprendizaje|calidad)/i.test(val);
+          const hasActor = /(estudiantes|niños|niñas|comunidad|docentes)/i.test(val);
+
+          feedback = `<div class="space-y-2">`;
+          if (hasNumber && hasSello && hasActor) {
+              feedback += `<div class="flex gap-2 text-emerald-400"><span class="font-bold">✓</span> Coherencia técnica detectada con el modelo de Pueblo Seco.</div>`;
+          } else {
+              if (!hasNumber) feedback += `<div class="flex gap-2 text-yellow-500"><span>⚠</span> Falta una meta cuantificable (% o cantidad).</div>`;
+              if (!hasSello) feedback += `<div class="flex gap-2 text-blue-400"><span>💡</span> Vincule la meta con su Sello Educativo.</div>`;
+              if (!hasActor) feedback += `<div class="flex gap-2 text-slate-400"><span>✍</span> Especifique el grupo objetivo.</div>`;
+          }
+          feedback += `</div>`;
+      }
+      aiFeedbackPanel.innerHTML = feedback;
+    });
+
+    function showNotification(text) {
+      const toast = document.getElementById('toast');
+      toast.innerText = text;
+      toast.style.opacity = "1";
+      toast.style.transform = "translateY(0) translateX(-50%)";
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(10px) translateX(-50%)";
+      }, 3000);
+    }
+
+    function smartCopy(text) {
+      const helper = document.getElementById('clipboard-helper');
+      helper.value = text;
+      helper.select();
+      document.execCommand('copy');
+      showNotification("✓ Copiado al portapapeles");
+    }
+
+    function copyPrompt(type) {
+      const obj = document.getElementById('objetivo').value || "[Objetivo Estratégico no definido]";
+      const meta = document.getElementById('meta-anual').value || "[Meta Anual no definida]";
+      const sello = document.getElementById('sello').value || "[Sello no definido]";
+      const dim = document.getElementById('dimension-pme').options[document.getElementById('dimension-pme').selectedIndex].text;
+      
+      // Capturar todas las acciones de la tabla
+      let accionesTxt = "";
+      const rows = Array.from(pmeTableBody.querySelectorAll('tr.hito-row'));
+      rows.forEach((row, i) => {
+          const name = row.querySelector('.action-name').value;
+          const desc = row.querySelector('.action-desc').value;
+          const ind = row.querySelector('.action-ind').value;
+          accionesTxt += `Acción ${i+1}: ${name}. Detalle: ${desc}. Indicador: ${ind}.\n`;
+      });
+
+      let prompt = "";
+      
+      if (type === 'coherencia') {
+          prompt = `Actúa como un Auditor Senior de la UATP del SLEP Valle Diguillín, experto en el Modelo de Desarrollo de Capacidades (MDC) y normativa PME Mineduc.
+Tu misión es evaluar la COHERENCIA SISTÉMICA del siguiente plan estratégico institucional:
+
+DATOS DEL PLAN:
+- Sello Educativo: "${sello}"
+- Dimensión: "${dim}"
+- Objetivo Estratégico (4 años): "${obj}"
+- Meta Anual 2026: "${meta}"
+
+ACCIONES PLANIFICADAS:
+${accionesTxt}
+
+REQUERIMIENTOS DEL ANÁLISIS:
+1. Evalúa si el Objetivo Estratégico es coherente con el Sello Educativo.
+2. Analiza si la Meta Anual realmente contribuye al cumplimiento del Objetivo a 4 años.
+3. Determina si las Acciones propuestas tienen la potencia técnica para movilizar la Meta Anual.
+4. Identifica nudos críticos: ¿Hay acciones que son solo "actividades administrativas" y no "instalación de capacidades"?
+5. Sugiere mejoras específicas para fortalecer la alineación vertical del plan.
+
+Responde de forma técnica, empática y centrada en la mejora continua.`;
+      } else if (type === 'indicador') {
+          prompt = `Como consultor ATP, analiza el Objetivo de la dimensión ${dim}: "${obj}". Propón 3 indicadores de proceso vinculados a los Estándares Indicativos de Desempeño (EID) que aseguren la instalacion de capacidades.`;
+      } else if (type === 'acciones') {
+          prompt = `Basado en la Meta Anual: "${meta}", sugiere un desglose de acciones para el Plan Anual 2026, incluyendo responsables (UTP, Docentes, Dupla) y medios de verificación requeridos.`;
+      }
+
+      smartCopy(prompt);
+    }
+
+    function copiarTodo() {
+      let content = `--- REPORTE TÉCNICO PME (UATP Valle Diguillín) ---\n\n`;
+      content += `DIMENSIÓN: ${document.getElementById('dimension-pme').value.toUpperCase()}\n`;
+      content += `SELLO: ${document.getElementById('sello').value}\n`;
+      content += `OBJETIVO ESTRATÉGICO: ${document.getElementById('objetivo').value}\n`;
+      content += `META ANUAL: ${document.getElementById('meta-anual').value}\n\n`;
+      content += `MATRIZ DE ACCIONES:\n`;
+
+      const rows = Array.from(pmeTableBody.querySelectorAll('tr.hito-row'));
+      rows.forEach((row, i) => {
+        const name = row.querySelector('.action-name').value;
+        const desc = row.querySelector('.action-desc').value;
+        const ind = row.querySelector('.action-ind').value;
+        const verif = row.querySelector('.action-verif').value;
+        content += `${i + 1}. [ACCIÓN: ${name || 's/n'}]\n`;
+        content += `   > Indicador: ${ind}\n`;
+        content += `   > Verificación: ${verif}\n`;
+        content += `   > Detalle: ${desc}\n\n`;
+      });
+
+      smartCopy(content);
+    }
+
+    function exportarJSON() {
+      const data = {
+        meta: { establishment: "UATP-Diguillin", cycle: "2026" },
+        config: {
+            dimension: document.getElementById('dimension-pme').value,
+            sello: document.getElementById('sello').value
+        },
+        plan: {
+          objetivo: document.getElementById('objetivo').value,
+          meta_anual: document.getElementById('meta-anual').value,
+          acciones: Array.from(pmeTableBody.querySelectorAll('tr.hito-row')).map(row => {
+            return {
+              nombre: row.querySelector('.action-name').value,
+              detalle: row.querySelector('.action-desc').value,
+              indicador: row.querySelector('.action-ind').value,
+              verificacion: row.querySelector('.action-verif').value
+            };
+          })
+        }
+      };
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `planificacion_pme_${Date.now()}.json`;
+      a.click();
+      showNotification("💾 Matriz JSON descargada");
+    }
+  </script>
+</body>
+</html>

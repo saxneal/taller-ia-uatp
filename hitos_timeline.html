@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrenador PME e IA - SLEP Valle Diguillín</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: #f1f5f9; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .gradient-text { background: linear-gradient(90deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hito-row { transition: all 0.3s ease; }
+        .hito-row:hover { transform: scale(1.01); background: rgba(51, 65, 85, 0.5); }
+        .formula-tag { @apply px-2 py-0.5 rounded text-[10px] font-bold uppercase; }
+    </style>
+</head>
+<body class="min-h-screen pb-20">
+
+    <!-- Header con Contexto Territorial -->
+    <header class="p-6 border-b border-slate-700 bg-slate-900/80 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold gradient-text">Laboratorio de Redacción PME + IA</h1>
+                <p class="text-xs text-slate-400">Escuela de Liderazgo • SLEP Valle Diguillín</p>
+            </div>
+            <div class="flex gap-2">
+                <span class="px-3 py-1 bg-green-500/10 border border-green-500/50 text-green-400 rounded-full text-xs font-semibold">Aprendizaje Activo</span>
+                <span class="px-3 py-1 bg-blue-500/10 border border-blue-500/50 text-blue-400 rounded-full text-xs font-semibold">Normativa PME</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-4 mt-6">
+        
+        <!-- Panel de Aprendizaje: La Fórmula del Éxito -->
+        <section class="mb-8">
+            <h2 class="text-sm font-bold text-slate-400 mb-4 uppercase tracking-widest">Píldora de Aprendizaje: Estructura de Acciones</h2>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <div class="glass-card p-3 rounded-xl border-t-2 border-blue-500">
+                    <span class="formula-tag bg-blue-500/20 text-blue-400">1. Qué</span>
+                    <p class="text-[11px] mt-1 text-slate-300">Acción (Verbo infinitivo).</p>
+                </div>
+                <div class="glass-card p-3 rounded-xl border-t-2 border-purple-500">
+                    <span class="formula-tag bg-purple-500/20 text-purple-400">2. Cómo</span>
+                    <p class="text-[11px] mt-1 text-slate-300">Procedimiento técnico.</p>
+                </div>
+                <div class="glass-card p-3 rounded-xl border-t-2 border-emerald-500">
+                    <span class="formula-tag bg-emerald-500/20 text-emerald-400">3. Cuándo</span>
+                    <p class="text-[11px] mt-1 text-slate-300">Fechas e hitos.</p>
+                </div>
+                <div class="glass-card p-3 rounded-xl border-t-2 border-amber-500">
+                    <span class="formula-tag bg-amber-500/20 text-amber-400">4. Quiénes</span>
+                    <p class="text-[11px] mt-1 text-slate-300">Responsables/Actores.</p>
+                </div>
+                <div class="glass-card p-3 rounded-xl border-t-2 border-rose-500">
+                    <span class="formula-tag bg-rose-500/20 text-rose-400">5. Para qué</span>
+                    <p class="text-[11px] mt-1 text-slate-300">Sentido pedagógico.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contenedor Principal -->
+        <div class="glass-card rounded-2xl shadow-2xl overflow-hidden">
+            <div class="p-6 border-b border-slate-700 bg-slate-800/50 flex flex-wrap justify-between items-center gap-4">
+                <div class="flex gap-2">
+                    <button onclick="addHito()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-lg font-bold transition flex items-center shadow-lg shadow-blue-900/40">
+                        <span class="mr-2 text-xl">+</span> Crear Acción PME
+                    </button>
+                    <button onclick="exportar()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2.5 rounded-lg font-semibold transition flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Exportar a Texto
+                    </button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div id="progress-bar-container" class="hidden md:flex flex-col items-end">
+                        <div class="text-[10px] text-slate-400 uppercase font-bold mb-1">Calidad Técnica Global</div>
+                        <div class="w-48 h-2 bg-slate-700 rounded-full overflow-hidden">
+                            <div id="total-progress" class="h-full bg-gradient-to-r from-blue-500 to-emerald-500 transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="list" class="p-6 space-y-6 min-h-[350px]">
+                <!-- Estado Vacío Didáctico -->
+                <div id="empty-state" class="text-center py-16">
+                    <div class="text-6xl mb-4 grayscale opacity-30">✍️</div>
+                    <h3 class="text-xl font-bold text-slate-400">¡Comencemos la práctica!</h3>
+                    <p class="text-slate-500 max-w-sm mx-auto mt-2">Añade una acción para empezar a entrenar tu redacción técnica siguiendo la normativa SEP.</p>
+                </div>
+            </div>
+
+            <div class="p-4 bg-slate-950/60 border-t border-slate-700">
+                <div id="msg" class="flex items-center gap-2 text-sm"></div>
+            </div>
+        </div>
+
+        <!-- El Entrenador de IA -->
+        <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="glass-card p-6 rounded-2xl border-2 border-dashed border-indigo-500/30">
+                <h2 class="text-lg font-bold text-indigo-400 mb-3 flex items-center">
+                    <span class="mr-2">⚡</span> Paso 1: Generar Prompt Crítico
+                </h2>
+                <p class="text-xs text-slate-400 mb-4">Esta instrucción obliga a la IA a auditar tu texto bajo los estándares del SLEP.</p>
+                <div class="bg-black/60 p-4 rounded-xl font-mono text-xs text-indigo-300 border border-indigo-500/20 relative group">
+                    <code id="prompt-output" class="leading-relaxed">
+                        Cargando acciones para análisis...
+                    </code>
+                    <button onclick="copyPrompt()" class="absolute top-2 right-2 bg-indigo-500 hover:bg-indigo-400 text-white px-2 py-1 rounded text-[10px] transition font-bold shadow-lg">Copiar</button>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 rounded-2xl bg-indigo-900/10 border border-indigo-500/20">
+                <h2 class="text-lg font-bold text-indigo-300 mb-3 flex items-center">
+                    <span class="mr-2">💡</span> Paso 2: Tutoría IA
+                </h2>
+                <p class="text-xs text-slate-300 mb-4">Pega el prompt copiado en tu IA y ella te dirá:</p>
+                <ul class="text-xs space-y-2 text-slate-400">
+                    <li class="flex items-start gap-2 italic">
+                        <span class="text-emerald-500">✔</span> "¿Tu 'Para qué' realmente tributa a la mejora o es solo cumplimiento?"
+                    </li>
+                    <li class="flex items-start gap-2 italic">
+                        <span class="text-emerald-500">✔</span> "¿Estás asignando responsables claros para la rendición?"
+                    </li>
+                    <li class="flex items-start gap-2 italic">
+                        <span class="text-emerald-500">✔</span> "¿El 'Cuándo' tiene hitos realistas para el monitoreo?"
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let hitoCount = 0;
+
+        function addHito() {
+            document.getElementById('empty-state').style.display = 'none';
+            const wrap = document.getElementById('list');
+            const hitoId = Date.now();
+            const card = document.createElement('div');
+            card.className = 'hito-row glass-card p-5 rounded-xl border border-slate-700/50 bg-slate-800/20 relative overflow-hidden';
+            card.id = `hito-${hitoId}`;
+            
+            card.innerHTML = `
+                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+                    <div class="md:col-span-3">
+                        <label class="block text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Fecha de Inicio (PME)</label>
+                        <input type="date" class="d w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition" onchange="validar()">
+                    </div>
+                    <div class="md:col-span-7">
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">Redacción de la Acción (Estructura Normativa)</label>
+                            <button onclick="templateText(${hitoId})" class="text-[9px] text-indigo-400 hover:text-indigo-300 font-bold uppercase underline">Usar Plantilla Completa</button>
+                        </div>
+                        <textarea class="t w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition min-h-[100px]" 
+                                  placeholder="Redacta considerando: Qué, Cómo, Cuándo, Quiénes y Para qué..." 
+                                  oninput="updateUI(${hitoId})"></textarea>
+                        
+                        <!-- Mini Check de Calidad por Hito -->
+                        <div class="flex gap-2 mt-2" id="check-${hitoId}">
+                            <span class="text-[9px] px-1.5 py-0.5 rounded border border-slate-700 text-slate-600 q-que">Qué</span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded border border-slate-700 text-slate-600 q-como">Cómo</span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded border border-slate-700 text-slate-600 q-cuando">Cuándo</span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded border border-slate-700 text-slate-600 q-quienes">Quiénes</span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded border border-slate-700 text-slate-600 q-para">Para qué</span>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2 flex flex-col gap-2">
+                         <label class="block text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Dimensión</label>
+                         <select class="category w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm">
+                            <option value="Liderazgo">Liderazgo</option>
+                            <option value="Pedagogica">G. Pedagógica</option>
+                            <option value="Convivencia">Convivencia</option>
+                            <option value="Recursos">G. Recursos</option>
+                        </select>
+                        <button onclick="removeHito(${hitoId})" class="mt-2 text-slate-500 hover:text-red-400 text-xs flex items-center justify-center gap-1 transition">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            `;
+            wrap.appendChild(card);
+            hitoCount++;
+            updateStats();
+        }
+
+        function templateText(id) {
+            const area = document.querySelector(`#hito-${id} textarea`);
+            area.value = "[QUÉ]: \n[CÓMO]: \n[CUÁNDO]: \n[QUIÉNES]: \n[PARA QUÉ]: ";
+            area.focus();
+            updateUI(id);
+        }
+
+        function removeHito(id) {
+            document.getElementById(`hito-${id}`).remove();
+            hitoCount--;
+            updateStats();
+            if(hitoCount === 0) document.getElementById('empty-state').style.display = 'block';
+            validar();
+        }
+
+        function updateUI(id) {
+            const val = document.querySelector(`#hito-${id} textarea`).value.toLowerCase();
+            const checks = document.getElementById(`check-${id}`);
+            
+            // Lógica de detección de estructura normativa
+            const hasQue = val.includes('qué') || (val.length > 5 && val.split(' ').length > 2);
+            const hasComo = val.includes('cómo') || val.includes('mediante') || val.includes('a través') || val.includes('procedimiento');
+            const hasCuando = val.includes('cuándo') || val.includes('fecha') || val.includes('mes') || val.includes('hitos') || val.includes('periodo');
+            const hasQuienes = val.includes('quiénes') || val.includes('docentes') || val.includes('equipo') || val.includes('responsable');
+            const hasPara = val.includes('para') || val.includes('sentido') || val.includes('fin') || val.includes('objetivo');
+
+            updateCheck(checks.querySelector('.q-que'), hasQue, 'border-blue-500 text-blue-400');
+            updateCheck(checks.querySelector('.q-como'), hasComo, 'border-purple-500 text-purple-400');
+            updateCheck(checks.querySelector('.q-cuando'), hasCuando, 'border-emerald-500 text-emerald-400');
+            updateCheck(checks.querySelector('.q-quienes'), hasQuienes, 'border-amber-500 text-amber-400');
+            updateCheck(checks.querySelector('.q-para'), hasPara, 'border-rose-500 text-rose-400');
+
+            updateStats();
+        }
+
+        function updateCheck(el, condition, classes) {
+            if(condition) {
+                el.className = `text-[9px] px-1.5 py-0.5 rounded font-bold border ${classes}`;
+            } else {
+                el.className = 'text-[9px] px-1.5 py-0.5 rounded border border-slate-700 text-slate-600';
+            }
+        }
+
+        function updateStats() {
+            const totalText = [...document.querySelectorAll('.t')].map(e => e.value).join(" ");
+            
+            // Barra de progreso basada en el análisis de las palabras clave estructurales
+            const keywords = ['qué', 'cómo', 'cuándo', 'quiénes', 'para', 'mediante', 'responsable', 'impacto', 'hito'];
+            let found = 0;
+            keywords.forEach(k => { if(totalText.toLowerCase().includes(k)) found++; });
+            
+            const progress = hitoCount > 0 ? (found / keywords.length) * 100 : 0;
+            document.getElementById('total-progress').style.width = `${Math.min(progress, 100)}%`;
+            
+            updatePrompt();
+        }
+
+        function validar() {
+            const inputs = [...document.querySelectorAll('.d')].filter(e => e.value);
+            const dates = inputs.map(e => new Date(e.value));
+            let sorted = true;
+            for (let i = 1; i < dates.length; i++) {
+                if (dates[i] < dates[i - 1]) sorted = false;
+            }
+
+            const msg = document.getElementById('msg');
+            if (dates.length < 2) {
+                msg.innerHTML = '';
+            } else if (sorted) {
+                msg.innerHTML = '<span class="text-emerald-400 flex items-center">✔ Cronología de implementación válida para el ciclo escolar.</span>';
+            } else {
+                msg.innerHTML = '<span class="text-rose-400 flex items-center">⚠ Advertencia: Las fechas de inicio no siguen el flujo lógico del PME.</span>';
+            }
+        }
+
+        function updatePrompt() {
+            const actions = [...document.querySelectorAll('.t')].map(e => e.value).filter(v => v.length > 5);
+            const promptBox = document.getElementById('prompt-output');
+            
+            if(actions.length === 0) {
+                promptBox.innerText = "Añade acciones para generar el prompt de tutoría...";
+                return;
+            }
+
+            const basePrompt = `Actúa como un Asesor Técnico Pedagógico (ATP) experto en mejora continua y normativa SEP. 
+Analiza estas acciones de PME del SLEP Valle Diguillín: 
+"${actions.join(' | ')}"
+
+Por cada acción, evalúa estrictamente:
+1. ¿Define el QUÉ (verbo) de forma técnica e innovadora?
+2. ¿Explica el CÓMO (procedimiento) para que sea replicable por el equipo?
+3. ¿Establece el CUÁNDO (temporalidad/hitos) de forma clara?
+4. ¿Designa QUIÉNES participan y quién rinde cuenta?
+5. ¿El PARA QUÉ demuestra un impacto pedagógico real alineado al Modelo de Desarrollo de Capacidades?
+
+Si falta algún elemento, indícamelo y dame una propuesta mejorada que cumpla con el Manual de Rendición de Cuentas 2025 y instale capacidades en el equipo directivo.`;
+
+            promptBox.innerText = basePrompt;
+        }
+
+        function copyPrompt() {
+            const text = document.getElementById('prompt-output').innerText;
+            if(text.includes("Añade acciones")) return;
+            
+            navigator.clipboard.writeText(text);
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = "COPIADO";
+            btn.classList.replace('bg-indigo-500', 'bg-emerald-500');
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.classList.replace('bg-emerald-500', 'bg-indigo-500');
+            }, 2000);
+        }
+
+        function exportar() {
+            const ts = [...document.querySelectorAll('.t')];
+            const ds = [...document.querySelectorAll('.d')];
+            const cats = [...document.querySelectorAll('.category')];
+            
+            if (ts.length === 0) return;
+            
+            let txt = 'INFORME DE ACCIONES PME - PROPUESTA TÉCNICA ESTRUCTURADA\n';
+            txt += 'Territorio: SLEP Valle Diguillín\n';
+            txt += '------------------------------------------\n\n';
+            
+            for (let i = 0; i < ts.length; i++) {
+                txt += `ACCIÓN ${i+1} [Categoría: ${cats[i].value}]\n`;
+                txt += `FECHA DE INICIO: ${ds[i].value || 'POR DEFINIR'}\n`;
+                txt += `CONTENIDO ESTRUCTURADO:\n${ts[i].value}\n`;
+                txt += `------------------------------------------\n`;
+            }
+            
+            const blob = new Blob([txt], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const el = document.createElement('a');
+            el.href = url;
+            el.download = `Acciones_PME_Estructuradas_${new Date().toISOString().slice(0,10)}.txt`;
+            el.click();
+        }
+    </script>
+</body>
+</html>
