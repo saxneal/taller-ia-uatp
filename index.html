@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Taller IA · UATP SLEP Valle Diguillín</title>
+    <title>Hub UATP · SLEP Valle Diguillín</title>
 
-    <!-- PWA / iPad -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="UATP Mission IA">
+    <meta name="apple-mobile-web-app-title" content="Hub UATP">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,9 +15,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        /* ══════════════════════════════════════
-           VARIABLES Y BASE
-        ══════════════════════════════════════ */
         :root {
             --blue:    #0ea5e9;
             --purple:  #8b5cf6;
@@ -43,9 +39,6 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* ══════════════════════════════════════
-           SECCIONES
-        ══════════════════════════════════════ */
         section {
             min-height: 100vh;
             height: 100vh;
@@ -68,9 +61,7 @@
             .nav-terminal { left: 8px; padding: 10px 8px; }
         }
 
-        /* ══════════════════════════════════════
-           NAVEGACIÓN LATERAL
-        ══════════════════════════════════════ */
+        /* NAVEGACIÓN LATERAL */
         .nav-terminal {
             position: fixed;
             left: 18px;
@@ -110,9 +101,7 @@
             box-shadow: 0 0 8px var(--neon);
         }
 
-        /* ══════════════════════════════════════
-           GLASSMORPHISM
-        ══════════════════════════════════════ */
+        /* GLASSMORPHISM */
         .glass {
             background: rgba(15, 23, 42, 0.65);
             backdrop-filter: blur(18px);
@@ -127,9 +116,6 @@
             border-radius: 16px;
         }
 
-        /* ══════════════════════════════════════
-           GLOW AMBIENTAL
-        ══════════════════════════════════════ */
         .glow {
             position: absolute;
             border-radius: 50%;
@@ -137,9 +123,6 @@
             z-index: 0;
         }
 
-        /* ══════════════════════════════════════
-           TIPOGRAFÍA
-        ══════════════════════════════════════ */
         .sec-num {
             font-family: 'Space Mono', monospace;
             font-size: 0.7rem;
@@ -150,9 +133,6 @@
         .mono { font-family: 'Space Mono', monospace; }
         .text-neon { color: var(--neon); }
 
-        /* ══════════════════════════════════════
-           BADGES
-        ══════════════════════════════════════ */
         .badge {
             display: inline-flex;
             align-items: center;
@@ -170,9 +150,7 @@
         .b-all   { background: rgba(16,185,129,.15);  color: #34d399; border: 1px solid rgba(16,185,129,.3); }
         .b-game  { background: rgba(245,158,11,.12);  color: #fbbf24; border: 1px solid rgba(245,158,11,.3); }
 
-        /* ══════════════════════════════════════
-           TOOL CARDS
-        ══════════════════════════════════════ */
+        /* TOOL CARDS */
         .tool-card {
             display: flex;
             flex-direction: column;
@@ -203,45 +181,6 @@
             justify-content: space-between;
         }
 
-        /* ══════════════════════════════════════
-           BOTÓN PRINCIPAL
-        ══════════════════════════════════════ */
-        .btn-launch {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 0.75rem 1.5rem;
-            border-radius: 999px;
-            font-weight: 800;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            background: linear-gradient(135deg, var(--blue), var(--purple));
-            color: #fff;
-            text-decoration: none;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .btn-launch:hover { transform: scale(1.05); box-shadow: 0 0 28px rgba(139,92,246,.5); }
-        .btn-launch:active { transform: scale(0.97); }
-
-        /* ══════════════════════════════════════
-           PROMPT BLOCK
-        ══════════════════════════════════════ */
-        .prompt-block {
-            font-family: 'Space Mono', monospace;
-            font-size: 10px;
-            background: rgba(0,0,0,0.35);
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 12px;
-            padding: 14px 16px;
-            color: #94a3b8;
-            line-height: 1.7;
-        }
-        .prompt-block .key { color: var(--neon); }
-
-        /* ══════════════════════════════════════
-           SCROLL HINT
-        ══════════════════════════════════════ */
         .scroll-hint {
             position: absolute;
             bottom: 22px;
@@ -264,9 +203,6 @@
         }
         .scroll-hint .arr { animation: bounce-y 2s infinite; }
 
-        /* ══════════════════════════════════════
-           FADE-IN POR SECCIÓN
-        ══════════════════════════════════════ */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(24px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -280,82 +216,50 @@
 </head>
 <body>
 
-<!-- ╔═══════════════════════════╗
-     ║  NAV LATERAL TÉCNICO     ║
-     ╚═══════════════════════════╝ -->
 <nav class="nav-terminal" aria-label="Índice de secciones">
     <div class="nav-item active" onclick="goTo(0)">
         <div class="nav-dot"></div>
-        <span class="nav-label">00_INICIO</span>
+        <span class="nav-label">00_PORTADA</span>
     </div>
     <div class="nav-item" onclick="goTo(1)">
         <div class="nav-dot"></div>
-        <span class="nav-label">01_FRICCIÓN</span>
+        <span class="nav-label">01_EL_MODELO</span>
     </div>
     <div class="nav-item" onclick="goTo(2)">
         <div class="nav-dot"></div>
-        <span class="nav-label">02_DESAFÍO</span>
+        <span class="nav-label">02_REPOSITORIO</span>
     </div>
     <div class="nav-item" onclick="goTo(3)">
         <div class="nav-dot"></div>
-        <span class="nav-label">03_ANATOMÍA</span>
-    </div>
-    <div class="nav-item" onclick="goTo(4)">
-        <div class="nav-dot"></div>
-        <span class="nav-label">04_AGENTES</span>
-    </div>
-    <div class="nav-item" onclick="goTo(5)">
-        <div class="nav-dot"></div>
-        <span class="nav-label">05_MISIONES</span>
-    </div>
-    <div class="nav-item" onclick="goTo(6)">
-        <div class="nav-dot"></div>
-        <span class="nav-label">06_ESCUDO</span>
-    </div>
-    <div class="nav-item" onclick="goTo(7)">
-        <div class="nav-dot"></div>
-        <span class="nav-label">07_CIERRE</span>
+        <span class="nav-label">03_PRINCIPIOS</span>
     </div>
 </nav>
 
-
-<!-- ████████████████████████████████████████████
-     SECCIÓN 00 · PORTADA
-████████████████████████████████████████████ -->
 <section id="s0">
     <div class="glow w-[600px] h-[600px] bg-sky-500/10 blur-[140px] top-[-15%] left-[-10%]"></div>
     <div class="glow w-[400px] h-[400px] bg-purple-600/10 blur-[100px] bottom-[-10%] right-[0%]"></div>
 
     <div class="relative z-10 max-w-4xl">
-
         <p class="mono text-[10px] text-sky-400 tracking-[5px] uppercase mb-5 fade-in">
-            &gt;&gt; IA y Educación · LABORATORIO ACTIVO
+            >> UNIDAD DE APOYO A LA MEJORA CONTINUA
         </p>
 
         <h1 class="text-5xl md:text-7xl lg:text-[5.5rem] font-black leading-none tracking-tighter mb-5 fade-in delay-1">
-            IA:&nbsp;<span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400 uppercase">Socio de<br>Mejora</span>
+            Hub de<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400 uppercase">Recursos<br>Didácticos</span>
         </h1>
 
         <p class="text-base md:text-xl text-slate-400 max-w-xl font-light leading-relaxed mb-1 fade-in delay-2">
-            Taller de capacitación <strong class="text-slate-300">UATP · SLEP Valle Diguillín</strong>
+            Herramientas interactivas para el acompañamiento a Equipos Directivos del <strong class="text-slate-300">SLEP Valle Diguillín</strong>.
         </p>
         <p class="mono text-[10px] text-slate-600 mb-8 fade-in delay-2">
-            Asesores Técnico Pedagógicos + Equipos Directivos · 2026
+            Desarrollo de Capacidades · PME · Liderazgo Escolar
         </p>
 
-        <!-- Leyenda de público -->
         <div class="flex flex-wrap gap-3 mb-10 fade-in delay-3">
-            <span class="badge b-atp"><i class="fa-solid fa-person-chalkboard"></i> Para ATP</span>
-            <span class="badge b-dir"><i class="fa-solid fa-building-columns"></i> Para Directivos</span>
-            <span class="badge b-all"><i class="fa-solid fa-users"></i> Todos</span>
-            <span class="badge b-game"><i class="fa-solid fa-gamepad"></i> Juego interactivo</span>
-            <span class="mono text-[8px] text-slate-700 self-center tracking-widest ml-1">← referencias de uso</span>
+            <span class="badge b-atp"><i class="fa-solid fa-person-chalkboard"></i> Uso ATP</span>
+            <span class="badge b-dir"><i class="fa-solid fa-building-columns"></i> Equipos Directivos</span>
+            <span class="badge b-game"><i class="fa-solid fa-gamepad"></i> Gamificación</span>
         </div>
-
-        <a href="index.html" class="glass-lite inline-flex items-center gap-3 px-6 py-3 hover:border-sky-400 border border-transparent transition-colors rounded-2xl text-sm fade-in delay-4">
-            <i class="fa-solid fa-house-chimney text-sky-400 text-xs"></i>
-            <span class="font-bold text-xs uppercase tracking-wider">Volver al Hub UATP</span>
-        </a>
     </div>
 
     <div class="scroll-hint">
@@ -364,652 +268,255 @@
     </div>
 </section>
 
-
-<!-- ████████████████████████████████████████████
-     SECCIÓN 01 · MURO DE LA FRICCIÓN
-████████████████████████████████████████████ -->
 <section id="s1" style="background: rgba(15,23,42,0.3)">
     <div class="relative z-10 w-full max-w-5xl">
-
         <div class="flex items-baseline gap-4 mb-2 fade-in">
-            <span class="sec-num text-red-400">01</span>
-            <h2 class="text-3xl md:text-5xl font-black uppercase tracking-tighter">El Muro de la Fricción</h2>
+            <span class="sec-num text-sky-400">01</span>
+            <h2 class="text-3xl md:text-5xl font-black uppercase tracking-tighter">El Modelo UATP</h2>
         </div>
         <p class="mono text-[9px] text-slate-600 mb-9 ml-10 tracking-widest fade-in delay-1">
-            DIAGNÓSTICO DE PARTIDA · ¿Dónde pierde energía el sistema de acompañamiento?
+            NUESTRO ENFOQUE DE ACOMPAÑAMIENTO TÉCNICO
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5 fade-in delay-2">
-
-            <div class="glass p-6 border-t-2 border-red-500 flex flex-col gap-3">
-                <span class="text-4xl">😫</span>
-                <div class="flex items-center gap-2 flex-wrap">
-                    <h3 class="font-black text-sm uppercase tracking-tight">Burocracia</h3>
-                    <span class="badge b-atp">ATP</span>
-                </div>
+            <div class="glass p-6 border-t-2 border-emerald-500 flex flex-col gap-3">
+                <span class="text-4xl">🌱</span>
+                <h3 class="font-black text-sm uppercase tracking-tight">Instalar Capacidades</h3>
                 <p class="text-slate-400 text-[11px] leading-relaxed flex-1">
-                    ¿Cuántas horas se van en informes, tablas y reportes que nunca impactan la sala de clases? El trabajo técnico se ahoga en el operativo.
+                    No hacemos el trabajo por la escuela. Facilitamos la reflexión, modelamos la práctica y guiamos a los directivos para que lideren sus propios procesos de mejora (MDC).
                 </p>
-                <p class="mono text-[8px] text-red-400/60 mt-auto tracking-wider">TIEMPO INVERTIDO ≠ IMPACTO</p>
             </div>
 
             <div class="glass p-6 border-t-2 border-amber-500 flex flex-col gap-3">
-                <span class="text-4xl">📊</span>
-                <div class="flex items-center gap-2 flex-wrap">
-                    <h3 class="font-black text-sm uppercase tracking-tight">Datos sin Inteligencia</h3>
-                    <span class="badge b-all">Todos</span>
-                </div>
+                <span class="text-4xl">🎯</span>
+                <h3 class="font-black text-sm uppercase tracking-tight">Coherencia Sistémica</h3>
                 <p class="text-slate-400 text-[11px] leading-relaxed flex-1">
-                    Datos SIMCE, asistencia, FODA del PME… hay información, pero ¿existe inteligencia territorial para actuar sobre ella con criterio?
+                    Buscamos que el PME deje de ser un trámite burocrático y se convierta en una arquitectura lógica (Diagnóstico → Estrategia → Acción → Indicador) anclada a la Ley SEP.
                 </p>
-                <p class="mono text-[8px] text-amber-400/60 mt-auto tracking-wider">DATO ≠ DECISIÓN TÉCNICA</p>
             </div>
 
-            <div class="glass p-6 border-t-2 border-sky-500 flex flex-col gap-3">
-                <span class="text-4xl">✍️</span>
-                <div class="flex items-center gap-2 flex-wrap">
-                    <h3 class="font-black text-sm uppercase tracking-tight">Soledad Técnica</h3>
-                    <span class="badge b-atp">ATP</span>
-                </div>
+            <div class="glass p-6 border-t-2 border-purple-500 flex flex-col gap-3">
+                <span class="text-4xl">🗺️</span>
+                <h3 class="font-black text-sm uppercase tracking-tight">Pertinencia Territorial</h3>
                 <p class="text-slate-400 text-[11px] leading-relaxed flex-1">
-                    El ATP acompaña a muchas escuelas, pero ¿quién acompaña al ATP? ¿Tienes un experto que audite tus planes antes de llevarlos al establecimiento?
+                    Adaptamos nuestro apoyo a la realidad del Valle Diguillín: desde aulas multigrado en la ruralidad hasta contextos de encierro (EPJA). Un mismo estándar, múltiples estrategias.
                 </p>
-                <p class="mono text-[8px] text-sky-400/60 mt-auto tracking-wider">EL ASESOR TAMBIÉN NECESITA ASESORÍA</p>
-            </div>
-
-        </div>
-    </div>
-</section>
-
-
-<!-- ████████████████████████████████████████████
-     SECCIÓN 02 · TEST DEL "CASI" + ORÁCULO
-████████████████████████████████████████████ -->
-<section id="s2">
-    <div class="glow w-[450px] h-[450px] bg-purple-600/10 blur-[110px] top-[5%] right-[-10%]"></div>
-
-    <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center w-full max-w-5xl">
-
-        <!-- Columna izquierda: concepto -->
-        <div class="space-y-6 fade-in">
-            <div class="flex items-baseline gap-4">
-                <span class="sec-num text-purple-400">02</span>
-                <h2 class="text-3xl md:text-4xl font-black italic uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-sky-400">
-                    El Test del "Casi"
-                </h2>
-            </div>
-
-            <p class="mono text-[9px] text-slate-600 tracking-widest -mt-2">
-                ANTES DE USAR IA → CALIBRA EL CRITERIO TÉCNICO
-            </p>
-
-            <div class="glass p-6 border-l-4 border-purple-500 italic text-lg md:text-xl text-slate-200 leading-relaxed relative">
-                <span class="mono text-[8px] text-purple-400/50 not-italic absolute top-3 right-4 tracking-wider">META PME · EJEMPLO</span>
-                "Mejorar la convivencia escolar mediante talleres durante el 2026."
-            </div>
-
-            <div class="glass-lite p-5">
-                <p class="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-3">
-                    <i class="fa-solid fa-triangle-exclamation text-amber-400 mr-1"></i>
-                    ¿Por qué falla en una auditoría técnica?
-                </p>
-                <div class="mono text-[10px] text-slate-500 space-y-1.5 leading-relaxed">
-                    <div>→ Sin indicador cuantificable ni línea base</div>
-                    <div>→ "Mejorar" no define cuánto ni cómo medirlo</div>
-                    <div>→ Sin responsable explícito ni hito de verificación</div>
-                    <div>→ La acción no vincula con el resultado EID esperado</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Columna derecha: tarjeta de la herramienta -->
-        <div class="glass p-8 flex flex-col items-center text-center gap-5 bg-purple-900/10 fade-in delay-2">
-            <div class="w-14 h-14 rounded-2xl bg-purple-500/20 flex items-center justify-center text-3xl">🔮</div>
-
-            <div>
-                <div class="flex items-center justify-center gap-2 mb-2">
-                    <h3 class="font-black text-lg uppercase tracking-tight text-neon">Oráculo del Casi</h3>
-                    <span class="badge b-game"><i class="fa-solid fa-gamepad"></i> Juego</span>
-                </div>
-                <div class="flex gap-2 justify-center mb-3">
-                    <span class="badge b-atp">ATP</span>
-                    <span class="badge b-dir">Directivos</span>
-                </div>
-                <p class="text-slate-400 text-[11px] leading-relaxed max-w-xs">
-                    Banco de <strong class="text-slate-300">50 expedientes</strong> técnicos. El sistema elige 5 aleatorios: tu misión es identificar el error conceptual de cada meta PME y recibir retroalimentación inmediata.
-                </p>
-            </div>
-
-            <div class="glass-lite p-4 w-full text-left">
-                <p class="mono text-[8px] text-slate-600 tracking-wider mb-1">MECÁNICA</p>
-                <p class="mono text-[10px] text-slate-400">5 metas aleatorias → clasificar el error → % de calidad técnica</p>
-            </div>
-
-            <!-- ✅ ENLACE VERIFICADO -->
-            <a href="oraculo_casi.html" target="_blank" class="btn-launch w-full justify-center">
-                Iniciar Oráculo <i class="fa-solid fa-wand-magic-sparkles"></i>
-            </a>
-        </div>
-    </div>
-</section>
-
-
-<!-- ████████████████████████████████████████████
-     SECCIÓN 03 · ANATOMÍA DE LA IA
-████████████████████████████████████████████ -->
-<section id="s3" style="background: rgba(15,23,42,0.25)">
-    <div class="relative z-10 w-full max-w-5xl">
-
-        <div class="flex items-baseline gap-4 mb-2 fade-in">
-            <span class="sec-num text-sky-400">03</span>
-            <h2 class="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-sky-400">Anatomía de la IA</h2>
-        </div>
-        <p class="mono text-[9px] text-slate-600 mb-9 ml-10 tracking-widest fade-in delay-1">
-            LO QUE DEBES SABER ANTES DE USARLA CON TUS ESCUELAS
-        </p>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-7 fade-in delay-2">
-
-            <!-- Columna conceptos -->
-            <div class="space-y-4">
-
-                <div class="glass p-5 border-l-4 border-red-400 space-y-2">
-                    <p class="mono text-[9px] text-red-400 tracking-widest font-bold uppercase">⚠ Riesgo · El Loro Estocástico</p>
-                    <p class="text-sm text-slate-300 leading-relaxed">
-                        La IA predice la "siguiente palabra más probable". <strong class="text-white">Sin contexto específico, inventa datos con confianza</strong> (alucinación). Un prompt vago produce respuestas plausibles pero incorrectas para el contexto SLEP.
-                    </p>
-                </div>
-
-                <div class="glass p-5 border-l-4 border-emerald-400 space-y-3">
-                    <p class="mono text-[9px] text-emerald-400 tracking-widest font-bold uppercase">✓ Clave · Prompting RCT</p>
-                    <div class="prompt-block">
-                        <span class="text-slate-600">R →</span> <span class="key">Rol:</span> "Eres un asesor experto en PME chilenos…"<br>
-                        <span class="text-slate-600">C →</span> <span class="key">Contexto:</span> escuela, dimensión, datos, problema<br>
-                        <span class="text-slate-600">T →</span> <span class="key">Tarea:</span> acotada, concreta, verificable<br>
-                        <span class="border-t border-slate-700 block mt-2 pt-2">
-                            RCT = <span class="text-neon">respuesta de calidad técnica</span>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="glass p-5 border-l-4 border-sky-400 space-y-2">
-                    <p class="mono text-[9px] text-sky-400 tracking-widest font-bold uppercase">✓ Clave · La IA no sabe de tu escuela</p>
-                    <p class="text-sm text-slate-300 leading-relaxed">
-                        No conoce el Valle Diguillín, no ha leído el Manual de Cuentas SLEP ni el PEI de cada establecimiento. <strong class="text-white">Tú aportas el criterio territorial; la IA multiplica tu capacidad analítica.</strong>
-                    </p>
-                </div>
-            </div>
-
-            <!-- Columna cita + analogía -->
-            <div class="flex flex-col gap-5">
-
-                <div class="glass p-7 border-l-[5px] flex-1 flex flex-col justify-center" style="border-color: var(--neon)">
-                    <p class="text-lg md:text-xl font-light italic leading-relaxed text-slate-200 mb-4">
-                        "La IA no reemplaza al ATP. Pero el ATP que usa IA reemplazará al que no la usa."
-                    </p>
-                    <p class="mono text-[8px] text-slate-700 tracking-widest">PRINCIPIO DEL TALLER · UATP VD 2026</p>
-                </div>
-
-                <div class="glass-lite p-5 border border-slate-700/40">
-                    <p class="text-[10px] font-black uppercase tracking-wider text-slate-500 mb-3">🔭 Analogía del taller</p>
-                    <p class="text-sm text-slate-400 leading-relaxed">
-                        La IA es como un telescopio: <em class="text-slate-300">amplifica lo que ya sabes ver</em>. Un astrónomo experto lo usa para descubrir más. Sin formación, solo produce ruido. Tu expertise como ATP es el ojo; la IA es el instrumento.
-                    </p>
-                </div>
-
             </div>
         </div>
     </div>
 </section>
 
+<section id="s2" style="background: rgba(15,23,42,0.35)">
+    <div class="glow w-[500px] h-[500px] bg-sky-600/7 blur-[120px] bottom-[-10%] right-[5%]"></div>
 
-<!-- ████████████████████████████████████████████
-     SECCIÓN 04 · AGENTES DIGITALES 24/7
-████████████████████████████████████████████ -->
-<section id="s4">
-    <div class="glow w-[500px] h-[500px] bg-purple-700/8 blur-[120px] bottom-[-5%] left-[10%]"></div>
-
-    <div class="relative z-10 w-full max-w-5xl">
-
-        <div class="flex items-baseline gap-4 mb-2 fade-in">
-            <span class="sec-num text-purple-400">04</span>
-            <h2 class="text-3xl md:text-5xl font-black italic uppercase tracking-tighter">Asesores Digitales&nbsp;<span class="text-slate-600 font-black">24/7</span></h2>
-        </div>
-        <p class="mono text-[9px] text-slate-600 mb-9 ml-10 tracking-widest fade-in delay-1">
-            HERRAMIENTAS DE ACCESO LIBRE · PARA TU LABOR DIARIA
-        </p>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 fade-in delay-2">
-
-            <!-- Gemini -->
-            <a href="https://gemini.google.com/app" target="_blank" rel="noopener"
-               class="glass tool-card hover:border-sky-500 border border-white/5">
-                <div class="flex items-center gap-4">
-                    <i class="fa-brands fa-google text-3xl text-sky-400"></i>
-                    <div>
-                        <h3 class="font-black text-base uppercase tracking-tight">Google Gems / Gemini</h3>
-                        <span class="badge b-atp mt-1">Ideal para ATP</span>
-                    </div>
-                </div>
-                <p class="text-slate-500 text-[11px] leading-relaxed">
-                    Crea un <strong class="text-slate-300">"Gem" personalizado</strong> con el Manual de Cuentas SLEP o el marco PME como contexto permanente. Úsalo para resolver nudos críticos, revisar coherencia de acciones o generar preguntas de acompañamiento antes de visitar un establecimiento.
-                </p>
-                <div class="prompt-block">
-                    <span class="text-slate-600">Prompt sugerido →</span><br>
-                    <span class="key">"Eres un asesor técnico experto en PME SLEP Chile. Analiza esta acción y dime si tiene coherencia con el objetivo EID de la dimensión Gestión de Aula."</span>
-                </div>
-                <div class="tool-meta">
-                    <span class="text-sky-400/60">Acceso externo · Gratuito</span>
-                    <span class="text-sky-400 flex items-center gap-1">Abrir Gemini <i class="fa-solid fa-arrow-up-right-from-square text-[8px]"></i></span>
-                </div>
-            </a>
-
-            <!-- Copilot -->
-            <a href="https://copilot.microsoft.com/" target="_blank" rel="noopener"
-               class="glass tool-card hover:border-purple-500 border border-white/5">
-                <div class="flex items-center gap-4">
-                    <i class="fa-brands fa-microsoft text-3xl text-purple-400"></i>
-                    <div>
-                        <h3 class="font-black text-base uppercase tracking-tight">Microsoft Copilot</h3>
-                        <span class="badge b-all mt-1">ATP + Directivos</span>
-                    </div>
-                </div>
-                <p class="text-slate-500 text-[11px] leading-relaxed">
-                    Integrado en Word, Excel y Teams del SLEP. Úsalo para <strong class="text-slate-300">auditar la coherencia sistémica de los PME</strong>, generar actas técnicas, analizar datos de asistencia o redactar comunicaciones en segundos. Disponible con tu cuenta institucional Microsoft.
-                </p>
-                <div class="prompt-block">
-                    <span class="text-slate-600">Prompt sugerido →</span><br>
-                    <span class="key">"Revisa este PME y lista las acciones que no tienen indicador SMART, sin responsable asignado o que no vinculan con el diagnóstico de la dimensión."</span>
-                </div>
-                <div class="tool-meta">
-                    <span class="text-purple-400/60">Cuenta Microsoft institucional</span>
-                    <span class="text-purple-400 flex items-center gap-1">Abrir Copilot <i class="fa-solid fa-arrow-up-right-from-square text-[8px]"></i></span>
-                </div>
-            </a>
-
-        </div>
-    </div>
-</section>
-
-
-<!-- ████████████████████████████████████████████
-     SECCIÓN 05 · MISSION LAUNCHPAD (5 herramientas)
-████████████████████████████████████████████ -->
-<section id="s5" style="background: rgba(15,23,42,0.35)">
-    <div class="glow w-[500px] h-[500px] bg-emerald-600/7 blur-[120px] bottom-[-10%] right-[5%]"></div>
-
-    <div class="relative z-10 w-full max-w-6xl mx-auto">
-
-        <!-- Título centrado -->
-        <div class="text-center mb-9 fade-in">
-            <div class="flex items-center justify-center gap-4 mb-2">
-                <span class="sec-num text-neon">05</span>
+    <div class="relative z-10 w-full max-w-6xl mx-auto h-[80vh] flex flex-col">
+        <div class="mb-6 fade-in flex-shrink-0">
+            <div class="flex items-center gap-4 mb-1">
+                <span class="sec-num text-neon">02</span>
                 <h2 class="text-3xl md:text-5xl font-black italic uppercase tracking-tighter underline decoration-[var(--neon)] decoration-[3px] underline-offset-8">
-                    Mission Launchpad
+                    Arsenal Estratégico
                 </h2>
             </div>
-            <p class="mono text-[9px] text-slate-600 tracking-widest mt-2">
-                5 HERRAMIENTAS ACTIVAS DEL TALLER · HAZ CLIC PARA EJECUTAR
+            <p class="mono text-[9px] text-slate-600 tracking-widest mt-2 ml-10">
+                APLICACIONES DIDÁCTICAS SEGÚN FASE DEL PME
             </p>
         </div>
 
-        <!-- Grid 5 herramientas -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 fade-in delay-2">
+        <div class="overflow-y-auto pr-4 pb-10 flex-1 fade-in delay-2 custom-scrollbar">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
-            <!-- ─────────────────────────────── -->
-            <!-- 1. ORÁCULO DEL CASI             -->
-            <!-- ✅ Archivo: oraculo_casi.html   -->
-            <!-- Juego: 50 casos, 5 aleatorios   -->
-            <!-- Público: ATP + Directivos        -->
-            <!-- ─────────────────────────────── -->
-            <a href="oraculo_casi.html" target="_blank"
-               class="glass tool-card border border-white/5 hover:border-purple-400">
-                <div class="flex items-start justify-between">
-                    <span class="tool-emoji">🔮</span>
-                    <div class="flex flex-col items-end gap-1.5">
-                        <span class="badge b-all">Todos</span>
-                        <span class="badge b-game"><i class="fa-solid fa-gamepad"></i> Quiz</span>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="tool-title mb-1.5">Oráculo del Casi</h4>
-                    <p class="tool-desc">
-                        Banco de <strong class="text-slate-400">50 metas PME defectuosas</strong>. El sistema sortea 5 casos aleatorios: debes identificar el error conceptual de cada una (sin indicador, sin responsable, sin línea base…) y obtener retroalimentación inmediata con un puntaje de calidad técnica.
-                    </p>
-                </div>
-                <div class="tool-meta">
-                    <div class="flex gap-2">
-                        <span class="badge b-atp">ATP</span>
-                        <span class="badge b-dir">Directivos</span>
-                    </div>
-                    <span class="text-purple-400 flex items-center gap-1">Ejecutar <i class="fa-solid fa-arrow-right text-[8px]"></i></span>
-                </div>
-            </a>
-
-            <!-- ─────────────────────────────── -->
-            <!-- 2. DETECTIVE EID               -->
-            <!-- ✅ Archivo: accion_pme.html     -->
-            <!-- Juego: expedientes con shuffle  -->
-            <!-- Público: ATP                    -->
-            <!-- ─────────────────────────────── -->
-            <a href="accion_pme.html" target="_blank"
-               class="glass tool-card border border-white/5 hover:border-sky-400">
-                <div class="flex items-start justify-between">
-                    <span class="tool-emoji">🕵️</span>
-                    <div class="flex flex-col items-end gap-1.5">
-                        <span class="badge b-atp">ATP</span>
-                        <span class="badge b-game"><i class="fa-solid fa-gamepad"></i> Investigación</span>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="tool-title mb-1.5">Detective EID</h4>
-                    <p class="tool-desc">
-                        Cada partida genera un <strong class="text-slate-400">dossier de expedientes</strong> con acciones PME reales. Tu misión: analizar cada caso usando desplegables para clasificar si cumple o no los Estándares Indicativos de Desempeño. Usa el botón "Nuevos Expedientes" para barajar casos.
-                    </p>
-                </div>
-                <div class="tool-meta">
-                    <span class="badge b-atp">Asesor UATP</span>
-                    <span class="text-sky-400 flex items-center gap-1">Ejecutar <i class="fa-solid fa-arrow-right text-[8px]"></i></span>
-                </div>
-            </a>
-
-            <!-- ─────────────────────────────── -->
-            <!-- 3. EID ESCAPE                   -->
-            <!-- ✅ Archivo: eid_escape.html      -->
-            <!-- Juego: escape room de indicad.  -->
-            <!-- Público: ATP + Directivos        -->
-            <!-- ─────────────────────────────── -->
-            <a href="eid_escape.html" target="_blank"
-               class="glass tool-card border border-white/5 hover:border-rose-400">
-                <div class="flex items-start justify-between">
-                    <span class="tool-emoji">🧩</span>
-                    <div class="flex flex-col items-end gap-1.5">
-                        <span class="badge b-all">Todos</span>
-                        <span class="badge b-game"><i class="fa-solid fa-gamepad"></i> Escape</span>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="tool-title mb-1.5">EID Escape</h4>
-                    <p class="tool-desc">
-                        Formato <strong class="text-slate-400">sala de escape</strong> con navegación por secciones. Responde preguntas de opción múltiple sobre los Estándares Indicativos de Desempeño: identifica qué estándar aplica a cada situación escolar y "desbloquea" la siguiente sala. Ideal para trabajo grupal.
-                    </p>
-                </div>
-                <div class="tool-meta">
-                    <div class="flex gap-2">
-                        <span class="badge b-atp">ATP</span>
-                        <span class="badge b-dir">Directivos</span>
-                    </div>
-                    <span class="text-rose-400 flex items-center gap-1">Ejecutar <i class="fa-solid fa-arrow-right text-[8px]"></i></span>
-                </div>
-            </a>
-
-            <!-- ─────────────────────────────── -->
-            <!-- 4. LABORATORIO PME + IA         -->
-            <!-- ✅ Archivo: hitos_timeline.html  -->
-            <!-- Herramienta: redacción 5 partes -->
-            <!-- Público: ATP + Directivos        -->
-            <!-- ─────────────────────────────── -->
-            <a href="hitos_timeline.html" target="_blank"
-               class="glass tool-card border border-white/5 hover:border-emerald-400">
-                <div class="flex items-start justify-between">
-                    <span class="tool-emoji">✍️</span>
-                    <div class="flex flex-col items-end gap-1.5">
-                        <span class="badge b-all">Todos</span>
-                        <span class="badge b-atp">Redacción</span>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="tool-title mb-1.5">Laboratorio PME + IA</h4>
-                    <p class="tool-desc">
-                        Entrenador de <strong class="text-slate-400">redacción de acciones PME</strong> con la fórmula de 5 componentes: <em>Qué · Cómo · Cuándo · Quiénes · Para qué</em>. Evalúa en tiempo real la calidad técnica global del plan y permite exportar el resultado a texto. Apoyo IA integrado.
-                    </p>
-                </div>
-                <div class="tool-meta">
-                    <span class="mono text-[8px] text-slate-600">Fórmula 5 pasos + exportar</span>
-                    <span class="text-emerald-400 flex items-center gap-1">Ejecutar <i class="fa-solid fa-arrow-right text-[8px]"></i></span>
-                </div>
-            </a>
-
-            <!-- ─────────────────────────────── -->
-            <!-- 5. PME AI EXPLORER              -->
-            <!-- ✅ Archivo: mir_builder.html    -->
-            <!-- Herramienta: planif. estratég.  -->
-            <!-- Público: ATP + Directivos        -->
-            <!-- ─────────────────────────────── -->
-            <a href="mir_builder.html" target="_blank"
-               class="glass tool-card border border-white/5 hover:border-amber-400">
-                <div class="flex items-start justify-between">
-                    <span class="tool-emoji">🚀</span>
-                    <div class="flex flex-col items-end gap-1.5">
-                        <span class="badge b-all">Todos</span>
-                        <span class="badge b-dir">Planificación</span>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="tool-title mb-1.5">PME AI Explorer</h4>
-                    <p class="tool-desc">
-                        Laboratorio de <strong class="text-slate-400">planificación estratégica PME</strong>. Ingresa la dimensión, el objetivo estratégico y las acciones del establecimiento: la IA evalúa la coherencia sistémica, propone indicadores EID y genera un reporte técnico listo para copiar. Requiere cuenta Anthropic/Gemini integrada.
-                    </p>
-                </div>
-                <div class="tool-meta">
-                    <span class="mono text-[8px] text-slate-600">Análisis IA · Generar reporte</span>
-                    <span class="text-amber-400 flex items-center gap-1">Ejecutar <i class="fa-solid fa-arrow-right text-[8px]"></i></span>
-                </div>
-            </a>
-
-            <!-- Placeholder próxima herramienta -->
-            <div class="glass-lite p-5 border border-dashed border-white/8 flex flex-col items-center justify-center gap-3 text-center opacity-35 cursor-not-allowed">
-                <span class="text-3xl opacity-50">⚙️</span>
-                <h4 class="font-black text-xs uppercase tracking-tight text-slate-600">Próxima Herramienta</h4>
-                <p class="mono text-[8px] text-slate-700">En construcción · UATP 2026</p>
-            </div>
-
-        </div><!-- /grid -->
-    </div>
-</section>
-
-
-<!-- ████████████████████████████████████████████
-     SECCIÓN 06 · ESCUDO DEL ASESOR
-████████████████████████████████████████████ -->
-<section id="s6">
-    <div class="relative z-10 w-full max-w-5xl">
-
-        <div class="flex items-baseline gap-4 mb-2 fade-in">
-            <span class="sec-num text-red-400">06</span>
-            <h2 class="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-red-400">Escudo del Asesor</h2>
-        </div>
-        <p class="mono text-[9px] text-slate-600 mb-9 ml-10 tracking-widest fade-in delay-1">
-            LO QUE LA IA NO PUEDE NI DEBE HACER POR TI
-        </p>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-7 fade-in delay-2">
-
-            <!-- Lista de riesgos -->
-            <div class="space-y-4">
-
-                <div class="glass p-5 flex gap-4 items-start">
-                    <div class="p-3 rounded-xl bg-red-500/12 text-red-400 text-sm flex-shrink-0 mt-0.5">
-                        <i class="fa-solid fa-user-shield"></i>
+                <a href="dr_house_operativo.html" target="_blank" class="glass tool-card border border-white/5 hover:border-blue-500">
+                    <div class="flex items-start justify-between">
+                        <span class="tool-emoji">🩺</span>
+                        <div class="flex flex-col items-end gap-1.5">
+                            <span class="badge b-dir">Planificación</span>
+                            <span class="badge b-game"><i class="fa-solid fa-gamepad"></i> Simulación</span>
+                        </div>
                     </div>
                     <div>
-                        <div class="flex items-center gap-2 mb-1.5 flex-wrap">
-                            <h4 class="font-black text-sm uppercase tracking-tight">Privacidad de Datos</h4>
-                            <span class="badge b-all">Todos</span>
-                        </div>
-                        <p class="text-[11px] text-slate-500 leading-relaxed">
-                            <strong class="text-slate-300">Nunca subas nombres de estudiantes, RUN ni información sensible</strong> a una IA externa. Trabaja siempre con datos anonimizados. La Ley 19.628 y la normativa SLEP se aplican también al uso de herramientas digitales.
+                        <h4 class="tool-title mb-1.5 text-blue-400">Dr. House PME</h4>
+                        <p class="tool-desc">
+                            Junta médica para <strong class="text-slate-300">Planificación Operativa</strong>. Los equipos deben diagnosticar acciones, asignar responsables idóneos, validar gastos de Ley SEP y fijar cronogramas de monitoreo.
                         </p>
                     </div>
-                </div>
+                    <div class="tool-meta">
+                        <span class="mono text-[8px] text-slate-600">Foco: Coherencia y SEP</span>
+                        <span class="text-blue-400 flex items-center gap-1">Ejecutar <i class="fa-solid fa-arrow-right text-[8px]"></i></span>
+                    </div>
+                </a>
 
-                <div class="glass p-5 flex gap-4 items-start">
-                    <div class="p-3 rounded-xl bg-amber-500/12 text-amber-400 text-sm flex-shrink-0 mt-0.5">
-                        <i class="fa-solid fa-map-location-dot"></i>
+                <a href="oraculo_casi.html" target="_blank" class="glass tool-card border border-white/5 hover:border-purple-400">
+                    <div class="flex items-start justify-between">
+                        <span class="tool-emoji">🔮</span>
+                        <div class="flex flex-col items-end gap-1.5">
+                            <span class="badge b-dir">Objetivos</span>
+                            <span class="badge b-game"><i class="fa-solid fa-gamepad"></i> Quiz</span>
+                        </div>
                     </div>
                     <div>
-                        <div class="flex items-center gap-2 mb-1.5 flex-wrap">
-                            <h4 class="font-black text-sm uppercase tracking-tight">Pertinencia Territorial</h4>
-                            <span class="badge b-atp">ATP</span>
-                        </div>
-                        <p class="text-[11px] text-slate-500 leading-relaxed">
-                            La IA no conoce el Valle Diguillín, no ha visitado la escuela de Yungay ni ha leído el contexto de cada establecimiento. <strong class="text-slate-300">Tu criterio técnico local es insustituible.</strong> La IA amplifica; no reemplaza tu lectura territorial.
+                        <h4 class="tool-title mb-1.5">Oráculo del Casi</h4>
+                        <p class="tool-desc">
+                            Banco de <strong class="text-slate-300">metas PME defectuosas</strong>. El sistema sortea casos: debes identificar el error conceptual (sin indicador, sin responsable, etc.) y obtener retroalimentación técnica inmediata.
                         </p>
                     </div>
-                </div>
+                    <div class="tool-meta">
+                        <span class="mono text-[8px] text-slate-600">Foco: Redacción MARTE</span>
+                        <span class="text-purple-400 flex items-center gap-1">Ejecutar <i class="fa-solid fa-arrow-right text-[8px]"></i></span>
+                    </div>
+                </a>
 
-                <div class="glass p-5 flex gap-4 items-start">
-                    <div class="p-3 rounded-xl bg-purple-500/12 text-purple-400 text-sm flex-shrink-0 mt-0.5">
-                        <i class="fa-solid fa-robot"></i>
+                <a href="accion_pme.html" target="_blank" class="glass tool-card border border-white/5 hover:border-sky-400">
+                    <div class="flex items-start justify-between">
+                        <span class="tool-emoji">🕵️</span>
+                        <div class="flex flex-col items-end gap-1.5">
+                            <span class="badge b-atp">Evaluación</span>
+                        </div>
                     </div>
                     <div>
-                        <div class="flex items-center gap-2 mb-1.5 flex-wrap">
-                            <h4 class="font-black text-sm uppercase tracking-tight">Alucinación y Verificación</h4>
-                            <span class="badge b-all">Todos</span>
-                        </div>
-                        <p class="text-[11px] text-slate-500 leading-relaxed">
-                            La IA puede citar normas inexistentes, inventar porcentajes o generar planes que parecen correctos pero no lo son para el contexto SLEP. <strong class="text-slate-300">Todo output debe ser validado por el profesional</strong> antes de llegar a la escuela.
+                        <h4 class="tool-title mb-1.5">Detective EID</h4>
+                        <p class="tool-desc">
+                            Dossier de expedientes con acciones PME reales. Tu misión: analizar cada caso para clasificar si cumple o no los <strong class="text-slate-300">Estándares Indicativos de Desempeño</strong>.
                         </p>
                     </div>
-                </div>
-
-            </div>
-
-            <!-- Cita + regla de oro -->
-            <div class="flex flex-col gap-5">
-
-                <div class="glass p-7 border-l-[5px] border-emerald-500 flex-1 flex flex-col justify-center">
-                    <p class="text-base md:text-lg font-light italic leading-relaxed text-slate-200 mb-4">
-                        "La IA le da a la escuela más aislada de Yungay la misma <strong class="text-white not-italic">potencia analítica</strong> que a un colegio de élite. Pero sin el asesor que interpreta el contexto, esa potencia es letra muerta."
-                    </p>
-                    <p class="mono text-[8px] text-slate-700 tracking-widest">PRINCIPIO DE EQUIDAD TERRITORIAL · UATP VD</p>
-                </div>
-
-                <div class="glass-lite p-5 border border-slate-700/40">
-                    <p class="text-[10px] font-black uppercase tracking-wider text-slate-500 mb-3">
-                        <i class="fa-solid fa-shield-halved text-emerald-400 mr-1"></i> Regla de oro
-                    </p>
-                    <div class="mono text-[10px] text-slate-500 space-y-2">
-                        <div class="flex gap-2"><span class="text-emerald-400 font-bold">✓</span><span>Usa IA para <em class="text-slate-400">acelerar</em> tu trabajo técnico</span></div>
-                        <div class="flex gap-2"><span class="text-emerald-400 font-bold">✓</span><span>Valida siempre el output con tu expertise</span></div>
-                        <div class="flex gap-2"><span class="text-emerald-400 font-bold">✓</span><span>Contextualiza con la realidad territorial</span></div>
-                        <div class="flex gap-2 border-t border-slate-700/50 pt-2 mt-1"><span class="text-red-400 font-bold">✗</span><span>No delegues el criterio pedagógico</span></div>
-                        <div class="flex gap-2"><span class="text-red-400 font-bold">✗</span><span>No subas datos personales de estudiantes</span></div>
+                    <div class="tool-meta">
+                        <span class="mono text-[8px] text-slate-600">Foco: Auditoría ATP</span>
+                        <span class="text-sky-400 flex items-center gap-1">Ejecutar <i class="fa-solid fa-arrow-right text-[8px]"></i></span>
                     </div>
+                </a>
+
+                <a href="eid_escape.html" target="_blank" class="glass tool-card border border-white/5 hover:border-rose-400">
+                    <div class="flex items-start justify-between">
+                        <span class="tool-emoji">🧩</span>
+                        <div class="flex flex-col items-end gap-1.5">
+                            <span class="badge b-dir">Apropiación</span>
+                            <span class="badge b-game"><i class="fa-solid fa-gamepad"></i> Escape Room</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="tool-title mb-1.5">EID Escape</h4>
+                        <p class="tool-desc">
+                            Responde preguntas sobre situaciones escolares: identifica qué <strong class="text-slate-300">Estándar Indicativo de Desempeño</strong> aplica para "desbloquear" salas. Ideal para trabajo en microcentros.
+                        </p>
+                    </div>
+                    <div class="tool-meta">
+                        <span class="mono text-[8px] text-slate-600">Foco: MBDLE / EID</span>
+                        <span class="text-rose-400 flex items-center gap-1">Ejecutar <i class="fa-solid fa-arrow-right text-[8px]"></i></span>
+                    </div>
+                </a>
+
+                <a href="hitos_timeline.html" target="_blank" class="glass tool-card border border-white/5 hover:border-emerald-400">
+                    <div class="flex items-start justify-between">
+                        <span class="tool-emoji">✍️</span>
+                        <div class="flex flex-col items-end gap-1.5">
+                            <span class="badge b-dir">Planificación</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="tool-title mb-1.5">Laboratorio PME</h4>
+                        <p class="tool-desc">
+                            Entrenador de <strong class="text-slate-300">redacción de acciones</strong> con la fórmula de 5 componentes: <em>Qué · Cómo · Cuándo · Quiénes · Para qué</em>. Evalúa la calidad técnica y exporta a texto.
+                        </p>
+                    </div>
+                    <div class="tool-meta">
+                        <span class="mono text-[8px] text-slate-600">Foco: Estructura Acción</span>
+                        <span class="text-emerald-400 flex items-center gap-1">Ejecutar <i class="fa-solid fa-arrow-right text-[8px]"></i></span>
+                    </div>
+                </a>
+
+                <a href="mir_builder.html" target="_blank" class="glass tool-card border border-white/5 hover:border-amber-400">
+                    <div class="flex items-start justify-between">
+                        <span class="tool-emoji">🚀</span>
+                        <div class="flex flex-col items-end gap-1.5">
+                            <span class="badge b-atp">Estrategia</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="tool-title mb-1.5">PME Explorer</h4>
+                        <p class="tool-desc">
+                            Laboratorio de <strong class="text-slate-300">planificación estratégica</strong>. Evalúa la coherencia sistémica entre la dimensión, el objetivo y las acciones propuestas por el establecimiento.
+                        </p>
+                    </div>
+                    <div class="tool-meta">
+                        <span class="mono text-[8px] text-slate-600">Foco: Hilo Conductor</span>
+                        <span class="text-amber-400 flex items-center gap-1">Ejecutar <i class="fa-solid fa-arrow-right text-[8px]"></i></span>
+                    </div>
+                </a>
+
+                <div class="glass-lite p-5 border border-dashed border-white/8 flex flex-col items-center justify-center gap-3 text-center opacity-35 cursor-not-allowed">
+                    <span class="text-3xl opacity-50">⚙️</span>
+                    <h4 class="font-black text-xs uppercase tracking-tight text-slate-600">Próxima App</h4>
+                    <p class="mono text-[8px] text-slate-700">En desarrollo · 2026</p>
                 </div>
 
             </div>
         </div>
     </div>
+    
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+    </style>
 </section>
 
+<section id="s3" class="text-center">
+    <div class="glow w-[800px] h-[800px] top-[-25%] left-[50%] -translate-x-1/2 bg-emerald-500/8 blur-[160px]"></div>
 
-<!-- ████████████████████████████████████████████
-     SECCIÓN 07 · CIERRE
-████████████████████████████████████████████ -->
-<section id="s7" class="text-center" style="overflow:hidden">
-    <div class="glow w-[800px] h-[800px] top-[-25%] left-[50%] -translate-x-1/2 bg-sky-500/8 blur-[160px]"></div>
+    <div class="relative z-10 flex flex-col items-center fade-in max-w-3xl mx-auto">
+        <i class="fa-solid fa-shield-halved text-4xl text-emerald-400 mb-6"></i>
+        <h2 class="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-6 text-slate-200">
+            Principios del Asesor
+        </h2>
 
-    <div class="relative z-10 flex flex-col items-center fade-in">
-
-        <p class="mono text-[9px] text-slate-700 tracking-[6px] uppercase mb-6">UATP · SLEP Valle Diguillín · 2026</p>
-
-        <h1 class="text-5xl md:text-8xl lg:text-[7rem] font-black leading-none tracking-tighter italic uppercase mb-5 text-transparent bg-clip-text bg-gradient-to-r from-[var(--neon)] via-sky-400 to-purple-400">
-            ¿Vas a<br>Modelar?
-        </h1>
-
-        <p class="text-sm md:text-lg text-slate-600 italic uppercase tracking-[6px] mb-2 font-light">
-            Acompañamiento Estratégico 2026
-        </p>
-        <p class="mono text-[9px] text-slate-700 max-w-sm text-center leading-relaxed mb-10">
-            El desafío no es dominar la tecnología.<br>
-            Es integrarla con criterio técnico, ética profesional<br>
-            y pertinencia territorial.
-        </p>
-
-        <!-- Accesos rápidos finales -->
-        <div class="glass-lite px-7 py-4 mb-10 flex flex-wrap gap-3 justify-center border border-white/5 rounded-2xl">
-            <span class="mono text-[8px] text-slate-700 tracking-widest self-center uppercase mr-1">herramientas →</span>
-            <a href="oraculo_casi.html"   target="_blank" class="badge b-all hover:opacity-75 transition-opacity cursor-pointer">🔮 Oráculo</a>
-            <a href="accion_pme.html"     target="_blank" class="badge b-atp hover:opacity-75 transition-opacity cursor-pointer">🕵️ Detective EID</a>
-            <a href="eid_escape.html"     target="_blank" class="badge b-all hover:opacity-75 transition-opacity cursor-pointer">🧩 EID Escape</a>
-            <a href="hitos_timeline.html" target="_blank" class="badge b-all hover:opacity-75 transition-opacity cursor-pointer">✍️ Lab PME+IA</a>
-            <a href="mir_builder.html"    target="_blank" class="badge b-all hover:opacity-75 transition-opacity cursor-pointer">🚀 PME Explorer</a>
+        <div class="glass p-8 text-left space-y-5 mb-8 border-t-4 border-emerald-500">
+            <div class="flex gap-4 items-start">
+                <i class="fa-solid fa-user-shield text-emerald-400 mt-1"></i>
+                <div>
+                    <h4 class="font-bold text-sm uppercase text-slate-300">Privacidad Estricta</h4>
+                    <p class="text-xs text-slate-500 mt-1">Nunca exponer datos reales de estudiantes o de convivencia escolar sensible en estas plataformas de trabajo. Se utilizan siempre escenarios simulados o datos anonimizados.</p>
+                </div>
+            </div>
+            <div class="flex gap-4 items-start">
+                <i class="fa-solid fa-map-location-dot text-emerald-400 mt-1"></i>
+                <div>
+                    <h4 class="font-bold text-sm uppercase text-slate-300">La Realidad Manda</h4>
+                    <p class="text-xs text-slate-500 mt-1">Ninguna herramienta didáctica sustituye el Manual de Rendición de Cuentas SEP ni el contexto real de nuestras escuelas rurales y urbanas del Valle Diguillín.</p>
+                </div>
+            </div>
         </div>
 
-        <div class="flex gap-4 flex-wrap justify-center">
-            <button onclick="goTo(0)"
-                class="px-8 py-3 glass border border-white/10 rounded-full mono text-[9px] hover:border-white/25 transition-colors uppercase tracking-widest">
-                Reboot_System <i class="fa-solid fa-rotate-right ml-1"></i>
-            </button>
-            <a href="index.html"
-               class="px-8 py-3 glass border border-sky-800/40 rounded-full mono text-[9px] hover:border-sky-500/40 transition-colors uppercase tracking-widest text-sky-400">
-                Volver al Hub <i class="fa-solid fa-house-chimney ml-1"></i>
-            </a>
-        </div>
+        <button onclick="goTo(0)" class="px-8 py-3 glass border border-white/10 rounded-full mono text-[9px] hover:border-white/25 transition-colors uppercase tracking-widest text-slate-400">
+            Volver al inicio <i class="fa-solid fa-arrow-up ml-1"></i>
+        </button>
 
         <p class="mono text-[7px] text-slate-800 tracking-[10px] uppercase mt-16">UATP | SLEP VALLE DIGUILLÍN</p>
     </div>
 </section>
 
-
-<!-- ════════════════════════════════════════════
-     JAVASCRIPT
-════════════════════════════════════════════ -->
 <script>
     'use strict';
-
     const sections = document.querySelectorAll('section');
     const navItems = document.querySelectorAll('.nav-item');
 
-    /* ── Navegación activa con IntersectionObserver ── */
     const io = new IntersectionObserver(entries => {
         entries.forEach(entry => {
             if (!entry.isIntersecting) return;
             const idx = [...sections].indexOf(entry.target);
-            navItems.forEach((item, i) =>
-                item.classList.toggle('active', i === idx)
-            );
+            navItems.forEach((item, i) => item.classList.toggle('active', i === idx));
         });
     }, { threshold: 0.45 });
 
     sections.forEach(s => io.observe(s));
 
-    /* ── Scroll suave ── */
     function goTo(index) {
         const target = sections[index];
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth' });
-        } else {
-            console.warn(`[UATP] Sección ${index} no existe.`);
-        }
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
     }
 
-    /* ── Tooltip accesible en links externos ── */
     document.querySelectorAll('a[target="_blank"]').forEach(a => {
-        if (!a.getAttribute('title')) {
-            a.setAttribute('title', '↗ Abre en nueva pestaña');
-        }
+        if (!a.getAttribute('title')) a.setAttribute('title', '↗ Abre en nueva pestaña');
     });
-
-    /* ── Keyboard nav (←/→ o Av/Re Pág) ── */
-    let current = 0;
-    document.addEventListener('keydown', e => {
-        if (['ArrowDown','PageDown'].includes(e.key)) {
-            e.preventDefault();
-            goTo(Math.min(current + 1, sections.length - 1));
-        } else if (['ArrowUp','PageUp'].includes(e.key)) {
-            e.preventDefault();
-            goTo(Math.max(current - 1, 0));
-        }
-    });
-    // Actualizar índice actual para navegación teclado
-    const ioKey = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-            if (e.isIntersecting) current = [...sections].indexOf(e.target);
-        });
-    }, { threshold: 0.6 });
-    sections.forEach(s => ioKey.observe(s));
 </script>
 </body>
 </html>
