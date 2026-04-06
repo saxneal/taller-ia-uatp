@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr. House PME · Junta Médica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0f1a;--surface:#131929;--panel:#1a2236;--border:#2a3550;--accent:#3b82f6;--accent-dim:#1e3a5f;--green:#10b981;--green-dim:#064e3b;--red:#ef4444;--red-dim:#450a0a;--amber:#f59e0b;--text-1:#f1f5f9;--text-2:#94a3b8;--text-3:#4b6080;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Space Mono',monospace;background:var(--bg);color:var(--text-1);min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(59,130,246,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+.screen{display:none;position:relative;z-index:1;}
+.screen.active{display:flex;flex-direction:column;}
+#intro{min-height:100vh;align-items:center;justify-content:center;padding:2rem;text-align:center;}
+.hospital-badge{display:inline-flex;align-items:center;gap:8px;background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);font-size:10px;letter-spacing:.2em;text-transform:uppercase;padding:6px 16px;border-radius:2px;margin-bottom:2rem;}
+.hospital-badge::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pdot 1.2s ease-in-out infinite;}
+@keyframes pdot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.6);}}
+.intro-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,12vw,100px);line-height:.92;letter-spacing:.02em;margin-bottom:.5rem;}
+.intro-title span{color:var(--accent);}
+.intro-subtitle{font-family:'Lora',serif;font-style:italic;font-size:1.1rem;color:var(--text-2);margin-bottom:2.5rem;}
+.team-cards{display:flex;justify-content:center;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;}
+.doctor-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1rem;width:120px;text-align:center;transition:border-color .2s,transform .2s;}
+.doctor-card:hover{border-color:var(--accent);transform:translateY(-4px);}
+.doc-avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:20px;margin:0 auto 8px;}
+.doc-name{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.doc-role{font-size:9px;color:var(--text-3);margin-top:2px;}
+.stats-row{display:flex;gap:1.5rem;justify-content:center;margin-bottom:2rem;flex-wrap:wrap;}
+.stat-pill{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.6rem 1.25rem;text-align:center;}
+.stat-pill-num{font-family:'Bebas Neue',sans-serif;font-size:28px;display:block;}
+.stat-pill-lbl{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-3);}
+.btn-primary{background:var(--accent);color:#fff;border:none;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.12em;padding:14px 48px;border-radius:3px;cursor:pointer;transition:background .2s,transform .1s;}
+.btn-primary:hover{background:#2563eb;}
+.btn-primary:active{transform:scale(.97);}
+.hint{margin-top:1rem;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-3);}
+#game{min-height:100vh;flex-direction:column;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-left{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.1em;}
+.topbar-left span{color:var(--accent);}
+.vitals{display:flex;align-items:center;gap:1.5rem;}
+.vital-stat{display:flex;flex-direction:column;align-items:flex-end;}
+.vital-label{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-3);}
+.vital-value{font-size:16px;font-weight:700;}
+.ecg-bar{height:3px;background:var(--border);}
+.ecg-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .6s cubic-bezier(.4,0,.2,1);}
+.phase-markers{display:flex;justify-content:space-between;padding:.4rem 1.5rem .2rem;background:var(--surface);border-bottom:1px solid var(--border);}
+.phase-dot{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:8px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);transition:color .3s;flex:1;max-width:90px;}
+.phase-dot.done{color:var(--green);}
+.phase-dot.current{color:var(--accent);}
+.phase-dot-circle{width:10px;height:10px;border-radius:50%;background:var(--border);transition:background .3s;}
+.phase-dot.done .phase-dot-circle{background:var(--green);}
+.phase-dot.current .phase-dot-circle{background:var(--accent);box-shadow:0 0 8px var(--accent);}
+.game-content{flex:1;max-width:780px;width:100%;margin:0 auto;padding:2rem 1.5rem 4rem;}
+.phase-tag{display:inline-block;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-dim);padding:3px 10px;border-radius:2px;margin-bottom:.75rem;}
+.scene-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(24px,5vw,36px);line-height:1;letter-spacing:.05em;margin-bottom:1.5rem;}
+.briefing-card{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:0 4px 4px 0;padding:1.25rem 1.5rem;margin-bottom:2rem;}
+.patient-info{display:flex;gap:1.5rem;margin-bottom:1rem;flex-wrap:wrap;}
+.info-chip{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);}
+.info-chip strong{color:var(--text-2);display:block;font-size:11px;}
+.house-quote{font-family:'Lora',serif;font-style:italic;font-size:.95rem;color:var(--text-1);border-top:1px solid var(--border);padding-top:1rem;margin-top:1rem;line-height:1.7;}
+.house-quote::before{content:'" ';color:var(--accent);font-size:1.4rem;}
+.q-counter{display:inline-flex;gap:.5rem;align-items:center;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-3);margin-bottom:1.5rem;}
+.q-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.q-dot.active{background:var(--accent);}
+.q-dot.done{background:var(--green);}
+.options{display:flex;flex-direction:column;gap:.75rem;}
+.option-btn{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1rem 1.25rem;text-align:left;cursor:pointer;display:flex;gap:1rem;align-items:flex-start;transition:border-color .2s,background .2s,transform .15s;position:relative;overflow:hidden;}
+.option-btn::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--border);transition:background .2s;}
+.option-btn:hover:not(:disabled){border-color:var(--accent);background:#1a2236;transform:translateX(4px);}
+.option-btn:hover:not(:disabled)::before{background:var(--accent);}
+.option-btn:disabled{cursor:default;transform:none;}
+.option-btn.correct{border-color:var(--green);background:var(--green-dim);}
+.option-btn.correct::before{background:var(--green);}
+.option-btn.wrong{border-color:var(--red);background:var(--red-dim);opacity:.7;}
+.option-btn.wrong::before{background:var(--red);}
+.opt-letter{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text-3);flex-shrink:0;transition:color .2s;min-width:18px;}
+.option-btn:hover:not(:disabled) .opt-letter{color:var(--accent);}
+.option-btn.correct .opt-letter{color:var(--green);}
+.option-btn.wrong .opt-letter{color:var(--red);}
+.opt-text{font-size:.85rem;line-height:1.6;color:var(--text-2);}
+.option-btn.correct .opt-text,.option-btn.wrong .opt-text{color:var(--text-1);}
+.feedback-panel{margin-top:1.5rem;border-radius:4px;overflow:hidden;animation:slideFade .35s ease;}
+@keyframes slideFade{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.fb-inner{padding:1.25rem 1.5rem;display:flex;gap:1rem;align-items:flex-start;}
+.feedback-panel.fb-correct{border:1px solid var(--green);background:var(--green-dim);}
+.feedback-panel.fb-wrong{border:1px solid var(--red);background:var(--red-dim);}
+.fb-speaker{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;}
+.fb-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;}
+.fb-speaker-name{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);}
+.fb-verdict{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.1em;margin-bottom:.5rem;}
+.feedback-panel.fb-correct .fb-verdict{color:var(--green);}
+.feedback-panel.fb-wrong .fb-verdict{color:var(--red);}
+.fb-message{font-family:'Lora',serif;font-style:italic;font-size:.9rem;line-height:1.7;color:var(--text-2);}
+.btn-next{width:100%;background:transparent;border:1px solid var(--border);border-top:none;color:var(--text-2);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;padding:.75rem;cursor:pointer;transition:background .2s,color .2s;}
+.btn-next:hover{background:var(--panel);color:var(--text-1);}
+.score-flash{position:fixed;top:70px;right:20px;font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--green);pointer-events:none;animation:scoreFloat 1.2s ease-out forwards;z-index:999;}
+@keyframes scoreFloat{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-50px);}}
+#end{min-height:100vh;align-items:center;justify-content:center;padding:2rem;text-align:center;flex-direction:column;}
+.end-grade{font-family:'Bebas Neue',sans-serif;font-size:120px;line-height:1;margin-bottom:.5rem;}
+.end-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:.1em;margin-bottom:1rem;}
+.score-summary{display:flex;gap:2rem;justify-content:center;margin-bottom:2.5rem;flex-wrap:wrap;}
+.score-item{text-align:center;}
+.score-num{font-family:'Bebas Neue',sans-serif;font-size:48px;display:block;}
+.score-lbl{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-3);}
+.house-closing{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--accent);max-width:480px;padding:1.25rem 1.5rem;border-radius:0 4px 4px 0;margin:0 auto 2.5rem;font-family:'Lora',serif;font-style:italic;font-size:.95rem;color:var(--text-2);line-height:1.7;text-align:left;}
+.history-section{max-width:640px;width:100%;margin:0 auto 2rem;text-align:left;}
+.history-label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-3);margin-bottom:.75rem;}
+.history-row{display:flex;align-items:center;gap:.75rem;padding:.55rem 0;border-bottom:1px solid var(--border);font-size:.78rem;color:var(--text-2);}
+.history-row:last-child{border-bottom:none;}
+.hist-badge{font-size:9px;font-family:'Bebas Neue',sans-serif;letter-spacing:.1em;padding:2px 8px;border-radius:2px;flex-shrink:0;}
+.hist-badge.ok{background:var(--green-dim);color:var(--green);}
+.hist-badge.fail{background:var(--red-dim);color:var(--red);}
+.hist-cat{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);flex-shrink:0;min-width:90px;}
+@media(max-width:600px){.team-cards{gap:.6rem;}.doctor-card{width:90px;}.vitals{gap:.75rem;}.phase-dot{font-size:7px;}.stats-row{gap:1rem;}}
+</style>
+</head>
+<body>
+
+<section id="intro" class="screen active">
+  <div>
+    <div class="hospital-badge">Hospital Princeton-Planmore · PME Unit</div>
+    <h1 class="intro-title">DR. HOUSE<br><span>PME</span></h1>
+    <p class="intro-subtitle">Junta Médica de Planificación Estratégica</p>
+    <div class="team-cards">
+      <div class="doctor-card"><div class="doc-avatar" style="background:#1e3a5f;color:#3b82f6;">H</div><div class="doc-name">House</div><div class="doc-role">Dir. Médico</div></div>
+      <div class="doctor-card"><div class="doc-avatar" style="background:#064e3b;color:#10b981;">C</div><div class="doc-name">Cameron</div><div class="doc-role">Diagnóstico</div></div>
+      <div class="doctor-card"><div class="doc-avatar" style="background:#450a0a;color:#ef4444;">F</div><div class="doc-name">Foreman</div><div class="doc-role">Neurología</div></div>
+      <div class="doctor-card"><div class="doc-avatar" style="background:#431407;color:#f97316;">Ch</div><div class="doc-name">Chase</div><div class="doc-role">Cirugía</div></div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-pill"><span class="stat-pill-num" style="color:var(--accent)">30</span><span class="stat-pill-lbl">Preguntas</span></div>
+      <div class="stat-pill"><span class="stat-pill-num" style="color:var(--green)">6</span><span class="stat-pill-lbl">Categorías</span></div>
+      <div class="stat-pill"><span class="stat-pill-num" style="color:var(--amber)">&#x221e;</span><span class="stat-pill-lbl">Combinaciones</span></div>
+    </div>
+    <button class="btn-primary" onclick="startGame()">INGRESAR A URGENCIAS</button>
+    <p class="hint">Sorteo aleatorio en cada sesión</p>
+  </div>
+</section>
+
+<section id="game" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">DR. <span>HOUSE</span> PME</div>
+    <div class="vitals">
+      <div class="vital-stat"><span class="vital-label">Puntos</span><span class="vital-value" id="score-display" style="color:var(--amber)">0</span></div>
+      <div class="vital-stat"><span class="vital-label">Aciertos</span><span class="vital-value" id="correct-display" style="color:var(--green)">0/6</span></div>
+    </div>
+  </div>
+  <div class="ecg-bar"><div class="ecg-fill" id="ecg-fill" style="width:0%"></div></div>
+  <div class="phase-markers" id="phase-markers"></div>
+  <div class="game-content" id="game-content"></div>
+</section>
+
+<section id="end" class="screen">
+  <div id="end-grade" class="end-grade"></div>
+  <div id="end-title" class="end-title"></div>
+  <div class="score-summary">
+    <div class="score-item"><span class="score-num" id="end-score" style="color:var(--amber)"></span><span class="score-lbl">Puntos</span></div>
+    <div class="score-item"><span class="score-num" id="end-correct" style="color:var(--green)"></span><span class="score-lbl">Correctas</span></div>
+    <div class="score-item"><span class="score-num" id="end-wrong" style="color:var(--red)"></span><span class="score-lbl">Incorrectas</span></div>
+  </div>
+  <div class="house-closing" id="house-closing"></div>
+  <div class="history-section">
+    <div class="history-label">Registro clínico de esta sesión</div>
+    <div id="history-list"></div>
+  </div>
+  <button class="btn-primary" onclick="startGame()">NUEVO CASO CLÍNICO</button>
+</section>
+
+<script>
+const BANK={
+diagnostico:{label:"Diagnóstico",phaseTag:"Fase 1 · Diagnóstico Diferencial",questions:[
+{sceneTitle:"Identificar la Causa Raíz",patient:"Esc. Titirilquén",ctx1:"SIMCE Lenguaje 220 pts.",ctx2:"PME Lenguaje 2025",houseQuote:"Los síntomas mienten. El SIMCE bajo no es el problema, es la fiebre. ¿Cuál es la causa raíz real que lo genera?",options:[
+{text:"Los estudiantes no logran los aprendizajes esperados en Lenguaje.",correct:false,speaker:"house",verdict:"Rechazado por obvio",msg:"Eso ES el síntoma. El diagnóstico debe identificar el POR QUÉ, no describir el QUÉ pasa. Vuelva a la facultad."},
+{text:"El 70% de los docentes no aplica estrategias de comprensión lectora diferenciadas en sus clases.",correct:true,speaker:"cameron",verdict:"Diagnóstico aprobado",msg:"Identificaste la causa pedagógica raíz: la práctica docente. Todo lo demás —el SIMCE, los cuadernos vacíos— son consecuencias. Desde aquí se puede intervenir."},
+{text:"La escuela no tiene buena biblioteca.",correct:false,speaker:"foreman",verdict:"Infraestructura no es causa",msg:"Una biblioteca nueva no enseña a leer. El problema no es la infraestructura, es lo que ocurre dentro del aula con el docente frente al curso."},
+{text:"Los apoderados no apoyan el aprendizaje en el hogar.",correct:false,speaker:"chase",verdict:"Causa inmodificable",msg:"El PME interviene sobre lo que el equipo directivo puede cambiar. No puedes operar a los apoderados."}]},
+{sceneTitle:"El Problema Real de Convivencia",patient:"Liceo Pelotillehue",ctx1:"Clima escolar: Crítico",ctx2:"PME Convivencia",houseQuote:"Me traen un estudiante con fiebre. Todos quieren bajarle la fiebre. Yo quiero saber qué virus tiene. ¿Cuál es la causa raíz del problema de convivencia?",options:[
+{text:"Los estudiantes se pelean mucho en los recreos.",correct:false,speaker:"house",verdict:"Síntoma, no causa",msg:"Las peleas son la fiebre. Tratarlas sin conocer la causa es aspirina a un tumor. ¿Por qué se pelean? ¿Qué condición lo genera?"},
+{text:"El establecimiento no tiene protocolos de conflicto conocidos por los docentes.",correct:true,speaker:"cameron",verdict:"Causa sistémica identificada",msg:"Un cuerpo docente que no sabe cómo actuar frente al conflicto no lo resuelve, lo magnifica. La ausencia de protocolo es la causa raíz modificable."},
+{text:"Los estudiantes vienen de familias disfuncionales.",correct:false,speaker:"foreman",verdict:"Causa externa",msg:"Factor de riesgo real, pero inmodificable desde el establecimiento. El PME actúa sobre lo que el equipo directivo puede cambiar."},
+{text:"Hay mal tiempo y los patios son feos.",correct:false,speaker:"chase",verdict:"Causalidad forzada",msg:"La estética del patio no produce violencia. Busca la causa pedagógica o de gestión que el equipo pueda intervenir."}]},
+{sceneTitle:"Diagnóstico en Matemática",patient:"Esc. Buenas Peras",ctx1:"4° básico: 38% logro",ctx2:"Causa en gestión",houseQuote:"Treinta y ocho por ciento. El órgano falla. Lo que necesito saber es POR QUÉ. ¿Cuál es la causa raíz?",options:[
+{text:"Los estudiantes no saben matemática.",correct:false,speaker:"house",verdict:"Tautología inútil",msg:"Eso es decir 'el paciente está enfermo porque está enfermo'. Necesito la causa del por qué no saben."},
+{text:"Los docentes no tienen horas protegidas para planificar clases con enfoque en resolución de problemas.",correct:true,speaker:"foreman",verdict:"Causa de gestión aprobada",msg:"Si los docentes no tienen tiempo protegido para planificar, reproducen clases memorísticas. La causa raíz está en la organización del tiempo institucional."},
+{text:"Las pruebas del SIMCE son muy difíciles.",correct:false,speaker:"chase",verdict:"Culpar al instrumento",msg:"Las mismas pruebas las hacen colegios con mejores resultados. El problema está dentro del establecimiento."},
+{text:"No hay suficientes computadores.",correct:false,speaker:"cameron",verdict:"Recurso no es causa",msg:"La matemática no requiere computadores para enseñarse bien. Busca la causa en la práctica pedagógica."}]},
+{sceneTitle:"Retención Escolar",patient:"Esc. Cumpeo",ctx1:"Deserción 2024: 14%",ctx2:"Matrícula en riesgo",houseQuote:"Catorce de cada cien pacientes se van antes de terminar el tratamiento. ¿Cuál es la causa raíz?",options:[
+{text:"Los estudiantes prefieren trabajar.",correct:false,speaker:"chase",verdict:"Factor contextual",msg:"Describe el contexto, no la causa modificable. Colegios similares retienen a sus estudiantes. ¿Qué hace este colegio distinto?"},
+{text:"El establecimiento carece de un sistema de alerta temprana de ausentismo.",correct:true,speaker:"house",verdict:"Causa sistémica aprobada",msg:"Sin alerta temprana, cuando intervienen ya es tarde. La ausencia de protocolo de seguimiento del ausentismo es la causa raíz modificable desde la gestión directiva."},
+{text:"Los estudiantes faltan mucho a clases.",correct:false,speaker:"foreman",verdict:"Síntoma previo",msg:"El ausentismo es el síntoma previo a la deserción, no la causa. ¿Por qué faltan? ¿Por qué nadie los llama?"},
+{text:"La escuela queda lejos.",correct:false,speaker:"cameron",verdict:"Condición estructural",msg:"La distancia existe hace décadas. Otros colegios rurales no tienen 14% de deserción. La causa está dentro, no en la geografía."}]},
+{sceneTitle:"Primera Infancia y Lenguaje",patient:"Jardín Aplaplac",ctx1:"NT1-NT2: 40% bajo en lenguaje",ctx2:"ELPI desfavorable",houseQuote:"Cuarenta por ciento de nuestros pacientes más pequeños con lenguaje en riesgo. Eso es una epidemia. ¿De dónde viene la infección?",options:[
+{text:"Los niños tienen poco vocabulario porque en sus casas se habla poco.",correct:false,speaker:"chase",verdict:"Causa externa",msg:"Factor de riesgo real, pero inmodificable desde el jardín. El PME actúa sobre lo que los educadores hacen dentro del aula."},
+{text:"Las educadoras no implementan rutinas diarias de lenguaje oral estructurado en sus planificaciones.",correct:true,speaker:"cameron",verdict:"Causa pedagógica aprobada",msg:"La ausencia de rutinas intencionadas de lenguaje oral en la jornada es la causa raíz modificable. Desde aquí se puede diseñar una intervención concreta."},
+{text:"Los niños ven demasiada televisión.",correct:false,speaker:"foreman",verdict:"Inmodificable desde el jardín",msg:"El equipo directivo no controla las rutinas del hogar. Necesitamos una causa que los educadores puedan atacar dentro del establecimiento."},
+{text:"No hay materiales didácticos suficientes.",correct:false,speaker:"house",verdict:"Recurso no es causa",msg:"He visto aulas sin materiales con excelentes resultados en lenguaje. La causa está en la intencionalidad pedagógica, no en los materiales."}]}
+]},
+
+objetivo:{label:"Objetivo",phaseTag:"Fase 2 · Prescripción Médica",questions:[
+{sceneTitle:"Redactar el Objetivo de Mejora",patient:"Esc. Titirilquén",ctx1:"Causa: Docentes sin estrategias lectoras",ctx2:"PME Lenguaje 2025",houseQuote:"Un objetivo mal redactado es una orden médica ilegible. Necesito QUIÉN, QUÉ logra, CUÁNTO mejora y CUÁNDO.",options:[
+{text:"Mejorar la educación de los estudiantes.",correct:false,speaker:"house",verdict:"Demasiado vago",msg:"¿Mejorar cuánto? ¿En qué? ¿Cuándo? No tiene sujeto, medida ni plazo. Inoperable."},
+{text:"Aumentar el puntaje SIMCE de Lenguaje de 4° básico de 220 a 240 puntos al término del año 2025.",correct:true,speaker:"cameron",verdict:"Objetivo SMART aprobado",msg:"Sujeto (4° básico), indicador (220 a 240 pts.), plazo (2025). Así se escribe una prescripción que el equipo puede ejecutar y auditar."},
+{text:"Que los estudiantes lean mejor y les guste leer.",correct:false,speaker:"foreman",verdict:"Inmedible",msg:"¿Cómo mides 'que les guste leer'? La Superintendencia audita datos, no sentimientos. Necesitas un indicador cuantificable."},
+{text:"Implementar 30 horas de talleres de lectura durante el primer semestre.",correct:false,speaker:"chase",verdict:"Acción disfrazada de objetivo",msg:"Eso es una ACCIÓN. Las horas de taller son el tratamiento; el objetivo es el resultado esperado en el paciente."}]},
+{sceneTitle:"Objetivo de Convivencia Escolar",patient:"Liceo Pelotillehue",ctx1:"Causa: Sin protocolos de conflicto",ctx2:"PME Convivencia",houseQuote:"Ahora que tenemos el diagnóstico, ¿cuál es el resultado medible que esperamos lograr este año? No quiero actividades disfrazadas de objetivo.",options:[
+{text:"Mejorar la convivencia escolar del establecimiento.",correct:false,speaker:"house",verdict:"Intención sin indicador",msg:"¿Cómo sé si lo lograste? ¿Qué datos presentas al 31 de diciembre? Sin medida, no hay objetivo."},
+{text:"Capacitar a todos los docentes en gestión de conflictos durante el año 2025.",correct:false,speaker:"foreman",verdict:"Actividad no es objetivo",msg:"La capacitación es la intervención. El objetivo es lo que cambia como resultado. ¿Qué índice de convivencia mejora?"},
+{text:"Reducir las situaciones de agresión registradas en el Libro de Clases en un 40% respecto de 2024, al cierre del año 2025.",correct:true,speaker:"cameron",verdict:"Objetivo medible aprobado",msg:"Indicador verificable (Libro de Clases), meta cuantificada (40%), plazo explícito (2025). Medicina basada en evidencia."},
+{text:"Construir una cultura de paz y respeto mutuo en la comunidad escolar.",correct:false,speaker:"chase",verdict:"Objetivo filosófico",msg:"Hermoso para una placa en la entrada. Completamente inauditable. El MINEDUC no financia filosofía; financia planes con indicadores verificables."}]},
+{sceneTitle:"Objetivo para Primera Infancia",patient:"Jardín Aplaplac",ctx1:"Causa: Sin rutinas de lenguaje oral",ctx2:"NT1-NT2",houseQuote:"Tenemos pacientes de 4 años con lenguaje en riesgo. ¿Cuál es el objetivo que vamos a lograr este año?",options:[
+{text:"Trabajar el lenguaje oral de los niños con actividades lúdicas.",correct:false,speaker:"chase",verdict:"Actividad sin meta",msg:"¿Cuánto mejora el lenguaje? ¿Cómo lo mides? Describes el proceso, no el resultado esperado."},
+{text:"El 80% de los párvulos de NT1 y NT2 alcanzará nivel esperado en lenguaje oral al término del año, según pauta institucional.",correct:true,speaker:"cameron",verdict:"Objetivo SMART aprobado",msg:"Sujeto (NT1-NT2), porcentaje (80%), instrumento (pauta institucional), plazo (fin de año). Operable y auditable."},
+{text:"Estimular el desarrollo integral de los párvulos.",correct:false,speaker:"house",verdict:"Demasiado general",msg:"'Desarrollo integral' abarca todo y nada. No puedo monitorear el universo. Un objetivo debe ser específico y medible."},
+{text:"Comprar material Montessori para todas las salas.",correct:false,speaker:"foreman",verdict:"Gasto disfrazado de objetivo",msg:"Comprar es una línea del presupuesto, no un objetivo de mejora. El objetivo es el cambio en el desarrollo de los niños."}]},
+{sceneTitle:"Objetivo de Gestión Directiva",patient:"Esc. Cumpeo",ctx1:"Causa: Sin sistema de alerta ausentismo",ctx2:"Retención en riesgo",houseQuote:"Necesito un objetivo que ataque la causa raíz. Específico. Medible. Con fecha de éxito o de muerte.",options:[
+{text:"Implementar un sistema de alerta temprana que permita intervenir antes de 10 días de inasistencia, logrando retener al 90% de los estudiantes en riesgo al cierre del año.",correct:true,speaker:"house",verdict:"Objetivo quirúrgico aprobado",msg:"Ataca la causa raíz, tiene el mecanismo (alerta antes de 10 días), la meta (90%) y el plazo. Eso se puede monitorear."},
+{text:"Que no haya más deserción en la escuela.",correct:false,speaker:"foreman",verdict:"Meta imposible sin datos",msg:"'Que no haya más' es una aspiración. ¿Cuánto es aceptable reducir? ¿Cuál es la línea base? El cero absoluto no es un objetivo medible."},
+{text:"Fortalecer los vínculos entre familia y escuela.",correct:false,speaker:"cameron",verdict:"No ataca la causa raíz",msg:"Importante, pero no es lo que diagnosticamos. La causa raíz era la ausencia de sistema de alerta. El PME debe ser coherente."},
+{text:"Realizar reuniones mensuales de apoderados durante el año.",correct:false,speaker:"chase",verdict:"Actividad listada como objetivo",msg:"Las reuniones son una acción. ¿Para qué se reúnen? ¿Qué cambia en los estudiantes? Eso es el objetivo."}]},
+{sceneTitle:"Objetivo Matemática",patient:"Esc. Buenas Peras",ctx1:"4° básico: 38% logro",ctx2:"Causa: Sin tiempo de planificación",houseQuote:"¿Qué objetivo se deriva directamente de la causa que identificamos? La coherencia es la diferencia entre medicina y chamanería.",options:[
+{text:"Asegurar 2 horas semanales de planificación colaborativa y que el 60% de los estudiantes de 4° básico alcance nivel esperado en Matemática al término del año.",correct:true,speaker:"foreman",verdict:"Objetivo sistémico aprobado",msg:"Vincula la causa (tiempo de planificación) con el resultado (logro estudiantil). Coherente y verificable en dos planos."},
+{text:"Que los niños aprendan a sumar, restar, multiplicar y dividir.",correct:false,speaker:"house",verdict:"Objetivo de segundo básico",msg:"Eso ya debería estar logrado en 4°. El objetivo debe ser pertinente al diagnóstico y al nivel de desarrollo esperado."},
+{text:"Comprar textos escolares nuevos de Matemática.",correct:false,speaker:"chase",verdict:"Insumo disfrazado",msg:"Los textos son un recurso. El objetivo es el resultado de aprendizaje. No confundas el bisturí con la cirugía."},
+{text:"Mejorar los resultados de Matemática de la escuela.",correct:false,speaker:"cameron",verdict:"Meta sin dientes",msg:"¿Mejorar cuánto? ¿De qué base? Esta frase aparece en el 80% de los PME del país y no sirve para planificar ni evaluar nada."}]}
+]},
+
+accion:{label:"Acción",phaseTag:"Fase 3 · Procedimiento Quirúrgico",questions:[
+{sceneTitle:"Diseñar la Acción Operativa",patient:"Esc. Cumpeo",ctx1:"Objetivo: Comprensión lectora 3° básico",ctx2:"Estrategia: Acompañamiento en aula",houseQuote:"¿Qué exactamente van a hacer? Necesito Qué, Cómo, Quién y Para Qué en una sola línea. No poesía.",options:[
+{text:"Apoyar a los profesores para que mejoren sus clases durante el año.",correct:false,speaker:"house",verdict:"Poesía, no cirugía",msg:"¿Apoyar cómo? ¿Quién? ¿Cuándo? Murió por falta de especificidad."},
+{text:"Realizar observación de clases semanal mediante pauta institucional, ejecutada por el Jefe UTP, para retroalimentar la práctica de comprensión lectora.",correct:true,speaker:"cameron",verdict:"Acción operativa aprobada",msg:"Tiene Qué (observación), Cómo (pauta), Cuándo (semanal), Quién (UTP) y Para Qué (retroalimentar). Al fin alguien usa la lógica en este hospital."},
+{text:"Contratar una ATE de acompañamiento por $3.000.000.",correct:false,speaker:"foreman",verdict:"Insumo no es acción",msg:"La ATE es un recurso presupuestario, no la acción pedagógica. ¿Qué hará el UTP mientras tanto?"},
+{text:"Observar clases, capacitar docentes, comprar material y evaluar a fin de año.",correct:false,speaker:"chase",verdict:"Cuatro cirugías en una línea",msg:"Una acción operativa = un procedimiento específico. Así no puedes monitorear nada."}]},
+{sceneTitle:"Acción de Convivencia Escolar",patient:"Liceo Pelotillehue",ctx1:"Objetivo: Reducir agresiones 40%",ctx2:"Talleres HSE",houseQuote:"Tienen el objetivo. Ahora necesito el procedimiento exacto. ¿Qué intervención aplicarán para lograrlo?",options:[
+{text:"Realizar talleres de habilidades socioemocionales mensuales para 5° a 8° básico, facilitados por el Encargado de Convivencia, usando el programa ministerial 'Habilidades para la Vida'.",correct:true,speaker:"cameron",verdict:"Acción pertinente aprobada",msg:"Tiene Qué (talleres HSE), Cuándo (mensual), Para Quiénes (5°-8°), Quién (Encargado de Convivencia) y Cómo (programa ministerial). Completa y ejecutable."},
+{text:"Fomentar la convivencia pacífica en el establecimiento.",correct:false,speaker:"house",verdict:"Propósito, no acción",msg:"'Fomentar' es un verbo decorativo. No me dice qué actividad concreta se realizará, quién la hará ni cómo se ejecuta."},
+{text:"Hacer algo cuando haya problemas entre alumnos.",correct:false,speaker:"foreman",verdict:"Protocolo reactivo inútil",msg:"El PME requiere acciones proactivas y planificadas, no respuestas de emergencia cuando el paciente ya entró en shock."},
+{text:"Reunir a todos los apoderados, docentes y estudiantes para hablar de convivencia.",correct:false,speaker:"chase",verdict:"Actividad sin estructura",msg:"¿Cuántas veces? ¿Con qué metodología? ¿Quién facilita? ¿Qué producto se espera? Sin esa información, es una reunión más."}]},
+{sceneTitle:"Acción de Lenguaje Oral en Párvulos",patient:"Jardín Aplaplac",ctx1:"Objetivo: 80% párvulos en nivel esperado",ctx2:"NT1-NT2",houseQuote:"El procedimiento debe ser ejecutable por educadoras reales, no por robots de laboratorio. Específico y concreto.",options:[
+{text:"Enseñarles a los niños a hablar mejor.",correct:false,speaker:"house",verdict:"Instrucción para aficionados",msg:"¿Cómo? ¿Cuándo? ¿Con qué metodología? Esta 'acción' es inútil como guía para una educadora real."},
+{text:"Implementar rutina diaria de 20 minutos de círculo de conversación guiada con preguntas abiertas, incorporada en la planificación semanal de todas las salas NT1 y NT2.",correct:true,speaker:"cameron",verdict:"Acción estructurada aprobada",msg:"Tiene Qué (círculo de conversación), Duración (20 min), Metodología (preguntas abiertas), Cobertura (todas las salas). Ejecutable desde mañana."},
+{text:"Comprar libros de cuentos para cada sala.",correct:false,speaker:"foreman",verdict:"Insumo presupuestario",msg:"Los libros son un recurso. La acción es lo que la educadora hace con esos libros en el tiempo pedagógico."},
+{text:"Hacer que los niños hablen más.",correct:false,speaker:"chase",verdict:"Acción sin estructura",msg:"Sin metodología, sin tiempo, sin responsable. El PME debe decir exactamente cómo, con qué práctica y cuándo."}]},
+{sceneTitle:"Acción de Retención Estudiantil",patient:"Esc. Cumpeo",ctx1:"Objetivo: Retener 90% en riesgo",ctx2:"Sistema de alerta",houseQuote:"El sistema de alerta es la intervención. ¿Quién hace qué, cuándo y cómo, cuando suena la alarma?",options:[
+{text:"Llamar a los papás cuando el alumno falta.",correct:false,speaker:"house",verdict:"Protocolo sin umbral",msg:"¿Quién llama? ¿Cuántas inasistencias activan la llamada? ¿Quién registra? Sin esa especificidad, cada funcionario hará lo que le parezca."},
+{text:"El Inspector reporta semanalmente al Director los estudiantes con 3 o más inasistencias; el Profesor Jefe contacta a la familia antes de 5 días; el Orientador hace seguimiento mensual de casos activos.",correct:true,speaker:"foreman",verdict:"Protocolo sistémico aprobado",msg:"Roles claros, umbrales definidos, seguimiento estructurado. Cada actor sabe exactamente cuándo actuar y qué hacer."},
+{text:"Preocuparnos más de los estudiantes que faltan.",correct:false,speaker:"cameron",verdict:"Intención sin procedimiento",msg:"'Preocuparse más' no es accionable. El PME necesita quién hace qué, cuándo y con qué herramienta."},
+{text:"Hacer clases más entretenidas para que los alumnos quieran venir.",correct:false,speaker:"chase",verdict:"Causa distinta, acción distinta",msg:"No ataca la causa que diagnosticamos: la ausencia de sistema de alerta. La coherencia diagnóstico-acción es la columna del PME."}]},
+{sceneTitle:"Acción de Planificación Docente",patient:"Esc. Buenas Peras",ctx1:"Objetivo: 2 hrs planificación + logro 60%",ctx2:"Matemática 4° básico",houseQuote:"¿Cómo van a garantizar esas dos horas semanales protegidas? El tiempo no aparece solo por decreto.",options:[
+{text:"Reorganizar el horario para establecer los miércoles de 14:00 a 16:00 hrs. como bloque protegido de planificación colaborativa de Matemática, coordinado por el Jefe UTP.",correct:true,speaker:"house",verdict:"Acción estructural aprobada",msg:"Día específico, horario exacto, disciplina focalizada, responsable definido. Verificable en el horario institucional desde el primer día."},
+{text:"Pedir a los docentes que planifiquen en sus ratos libres.",correct:false,speaker:"foreman",verdict:"Transferencia de carga",msg:"Los 'ratos libres' no existen en la jornada docente. Eso ES la causa raíz que diagnosticamos. Circular."},
+{text:"Comprar a cada docente un planificador de papel.",correct:false,speaker:"cameron",verdict:"Recurso cosmético",msg:"El problema no era la ausencia de agenda. Era la ausencia de tiempo protegido. Un cuaderno no crea horas en el horario."},
+{text:"Hacer un taller de planificación en la semana de desarrollo de enero.",correct:false,speaker:"chase",verdict:"Intervención puntual",msg:"Un taller en enero es una capacitación, no una acción sostenida. El problema requiere tiempo protegido semanal durante todo el año."}]}
+]},
+
+responsable:{label:"Responsable",phaseTag:"Fase 4 · Cirujano a Cargo",questions:[
+{sceneTitle:"Asignar el Responsable Correcto",patient:"Liceo Técnico Pelotillehue",ctx1:"Acción: Sistema de evaluación formativa",ctx2:"Implementación transversal",houseQuote:"Si el paciente muere en la mesa, ¿a quién le revoco la licencia? Un nombre. Un cargo. La responsabilidad colectiva es la forma elegante de decir 'nadie'.",options:[
+{text:"Toda la comunidad educativa.",correct:false,speaker:"house",verdict:"Responsabilidad diluida",msg:"Cuando algo falle, todos se mirarán esperando que el otro actúe. Responsabilidad colectiva = irresponsabilidad garantizada."},
+{text:"El Director del establecimiento.",correct:false,speaker:"foreman",verdict:"Sobrecarga del cirujano jefe",msg:"El Director lidera el establecimiento completo. El liderazgo efectivo se distribuye según competencia técnica."},
+{text:"El consultor externo de la ATE.",correct:false,speaker:"chase",verdict:"Responsable que se va",msg:"El externo apoya y transfiere; nunca es el responsable institucional. La responsabilidad es siempre interna."},
+{text:"El Jefe de UTP.",correct:true,speaker:"cameron",verdict:"Delegación técnica aprobada",msg:"Competencia curricular, cargo estable, rendición de cuentas posible. El UTP es el líder pedagógico natural para la evaluación formativa."}]},
+{sceneTitle:"Responsable de Convivencia",patient:"Liceo Pelotillehue",ctx1:"Acción: Talleres HSE mensuales",ctx2:"5° a 8° básico",houseQuote:"¿Quién lidera los talleres de habilidades socioemocionales? El que firma responde ante la Superintendencia.",options:[
+{text:"El Encargado de Convivencia Escolar.",correct:true,speaker:"cameron",verdict:"Responsable idóneo aprobado",msg:"Es exactamente para eso que existe el cargo. Competencia técnica en convivencia, rol institucional definido, permanente en el establecimiento."},
+{text:"Un docente voluntario.",correct:false,speaker:"house",verdict:"La voluntad no es estructura",msg:"Los voluntarios pueden dejar de serlo. El PME necesita un responsable cuya función institucional contemple esta tarea."},
+{text:"El Inspector General.",correct:false,speaker:"foreman",verdict:"Rol sancionatorio vs. formativo",msg:"El Inspector gestiona la disciplina. La convivencia formativa tiene una lógica diferente. Competencia y cargo deben coincidir."},
+{text:"Todos los profesores jefes en forma paralela.",correct:false,speaker:"chase",verdict:"Coordinación sin cabeza",msg:"Si todos lideran simultáneamente sin coordinador, cada uno hará algo distinto. Necesitas quien coordine y rinda cuentas del conjunto."}]},
+{sceneTitle:"Responsable del Sistema de Alerta",patient:"Esc. Cumpeo",ctx1:"Acción: Protocolo de ausentismo",ctx2:"Tres actores definidos",houseQuote:"El protocolo tiene tres actores: Inspector, Profesor Jefe y Orientador. ¿Quién es el responsable GLOBAL ante la dirección?",options:[
+{text:"El Inspector General, porque tiene los datos de asistencia primero.",correct:false,speaker:"foreman",verdict:"Ejecutor no es responsable global",msg:"El Inspector ejecuta la primera parte, pero el responsable global debe tener visión de todos los casos y articular los tres roles."},
+{text:"El Orientador, por su rol en trayectorias estudiantiles.",correct:true,speaker:"house",verdict:"Responsable sistémico aprobado",msg:"El Orientador articula la trayectoria completa, coordina los tres actores y tiene el mandato institucional del seguimiento de casos. Es el centro de gravedad del sistema."},
+{text:"El Profesor Jefe de cada curso, de manera autónoma.",correct:false,speaker:"cameron",verdict:"Sin coordinación central",msg:"Si cada Profesor Jefe gestiona su caso de forma aislada, no hay sistema. Los casos complejos requieren visión institucional."},
+{text:"La familia, porque son los responsables legales.",correct:false,speaker:"chase",verdict:"Responsabilidad mal asignada",msg:"Las familias son aliadas en la retención, no responsables del sistema de alerta institucional."}]},
+{sceneTitle:"Responsable de Planificación Colaborativa",patient:"Esc. Buenas Peras",ctx1:"Acción: Bloque protegido miércoles 14-16 hrs.",ctx2:"Planificación Matemática",houseQuote:"El bloque está en el horario. ¿Quién lidera técnicamente la sesión para que no se convierta en hora libre disfrazada?",options:[
+{text:"El docente con más años de experiencia.",correct:false,speaker:"chase",verdict:"Antigüedad no es liderazgo",msg:"Los años no garantizan el liderazgo pedagógico. Necesitas el cargo con función institucional de liderar el desarrollo curricular."},
+{text:"El Jefe de UTP, con un protocolo de planificación colaborativa definido.",correct:true,speaker:"foreman",verdict:"Liderazgo técnico aprobado",msg:"El UTP tiene el mandato curricular y la visión transversal. El protocolo garantiza que la sesión sea productiva y no conversación libre."},
+{text:"Cada docente planifica de forma autónoma durante ese bloque.",correct:false,speaker:"house",verdict:"Tiempo protegido sin estructura",msg:"Sin facilitador, sin protocolo y sin producto esperado, ese bloque dura dos semanas antes de desaparecer del horario."},
+{text:"La ATE, que facilita cada sesión.",correct:false,speaker:"cameron",verdict:"Dependencia externa",msg:"Si el liderazgo depende de la ATE, ¿qué pasa cuando termina el contrato? El equipo interno debe apropiarse. La ATE acompaña, no sustituye."}]},
+{sceneTitle:"Responsable del Proyecto de Lectura",patient:"Esc. Titirilquén",ctx1:"Acción: Círculos de lectura 3° básico",ctx2:"2 sesiones semanales",houseQuote:"Tenemos círculos de lectura dos veces por semana. ¿Quién responde ante la dirección si en agosto los niños no avanzan?",options:[
+{text:"El Jefe UTP, coordinando con los docentes de lenguaje.",correct:true,speaker:"cameron",verdict:"Responsable pedagógico aprobado",msg:"El UTP lidera el proceso, articula con docentes y rinde cuentas a la dirección. Eso cierra el circuito de responsabilidad pedagógica."},
+{text:"Los estudiantes, porque son ellos quienes leen.",correct:false,speaker:"house",verdict:"Responsabilidad invertida",msg:"Los estudiantes son los beneficiarios, no los responsables de su propia intervención. El sistema de adultos rinde cuentas."},
+{text:"El sostenedor, porque provee los recursos.",correct:false,speaker:"foreman",verdict:"Rol de sostenedor mal interpretado",msg:"El sostenedor aprueba el presupuesto; el responsable de ejecución es siempre un cargo del equipo directivo del establecimiento."},
+{text:"Nadie en particular, es responsabilidad compartida.",correct:false,speaker:"chase",verdict:"Evasión de responsabilidad",msg:"'Responsabilidad compartida sin coordinador' es decir que nadie responderá cuando algo falle. El PME exige un nombre en esa casilla."}]}
+]},
+
+sep:{label:"SEP",phaseTag:"Fase 5 · Autorización Financiera (Ley SEP)",questions:[
+{sceneTitle:"Imputar el Gasto Correctamente",patient:"Esc. Rural Buenas Peras",ctx1:"Acción: Recreos dirigidos convivencia",ctx2:"SEP disponible",houseQuote:"La Superintendencia es el forense del hospital. Si imputas algo que no corresponde, no terminas en urgencias. Terminas en la cárcel. ¿Qué gasto es pertinente?",options:[
+{text:"Pagar el sueldo base mensual del Profesor Jefe encargado de los recreos.",correct:false,speaker:"house",verdict:"Malversación de fondos",msg:"El sueldo base es gasto basal cubierto por la Subvención General. La SEP financia mejoras adicionales, no lo que el sistema ya paga."},
+{text:"Contratar una productora para un mega-evento con catering de lujo.",correct:false,speaker:"foreman",verdict:"Criterio de austeridad violado",msg:"Un evento de lujo no tributa al aprendizaje de los alumnos prioritarios. La SEP exige pertinencia directa y criterios de austeridad."},
+{text:"Adquisición de implementos deportivos y juegos de mesa para los recreos dirigidos.",correct:true,speaker:"cameron",verdict:"Gasto SEP aprobado",msg:"Gasto directo, pertinente a la acción, demostrable con facturas. El auditor cerrará el expediente sin observaciones."},
+{text:"Construir un gimnasio techado nuevo.",correct:false,speaker:"chase",verdict:"Infraestructura mayor no elegible",msg:"Eso es gasto de capital. Los fondos SEP son principalmente para operación pedagógica. No se construye el hospital con presupuesto de remedios."}]},
+{sceneTitle:"Gasto en Perfeccionamiento Docente",patient:"Esc. Titirilquén",ctx1:"Acción: Capacitación comprensión lectora",ctx2:"ATE o programa externo",houseQuote:"Quieren capacitar a los docentes. ¿Qué modalidad de gasto acepta la SEP sin que tengamos que explicarle al fiscal por qué?",options:[
+{text:"Pagar una capacitación en un hotel cinco estrellas con spa incluido.",correct:false,speaker:"house",verdict:"Criterio de austeridad violado",msg:"El spa no es un insumo pedagógico. La SEP financia el contenido, no el lujo del entorno."},
+{text:"Contratar a una universidad o ATE acreditada para un programa de formación en estrategias lectoras, con registro de asistencia y evaluación de impacto.",correct:true,speaker:"cameron",verdict:"Perfeccionamiento SEP aprobado",msg:"Proveedor acreditado, foco pedagógico claro, documentación de respaldo. Gasto pertinente y auditable."},
+{text:"Pagar el sueldo del Jefe UTP para que haga la capacitación interna.",correct:false,speaker:"foreman",verdict:"Gasto basal disfrazado",msg:"El sueldo del UTP ya está cubierto por la subvención general. No puedes usar SEP para pagar funciones habituales del cargo."},
+{text:"Comprar celulares de última generación para que los docentes accedan a videos pedagógicos.",correct:false,speaker:"chase",verdict:"Tecnología sin pertinencia directa",msg:"El celular es un activo de uso multipropósito. La SEP financia lo directamente vinculado a la acción pedagógica."}]},
+{sceneTitle:"Compra de Material Pedagógico",patient:"Jardín Aplaplac",ctx1:"Acción: Rutina diaria de lenguaje oral",ctx2:"NT1-NT2",houseQuote:"Necesitan material para los círculos de conversación. ¿Cuál de estas compras pasa el filtro del auditor de la Superintendencia?",options:[
+{text:"Set de láminas temáticas, juegos de vocabulario y títeres para uso diario en los círculos de conversación NT1 y NT2.",correct:true,speaker:"cameron",verdict:"Material pedagógico aprobado",msg:"Directamente vinculado a la acción, pertinente al nivel, uso pedagógico claro y documentable. Sin observaciones."},
+{text:"Televisores nuevos para todas las salas del jardín.",correct:false,speaker:"house",verdict:"Activo de uso múltiple",msg:"Un televisor tiene uso multipropósito. La SEP puede observar la falta de justificación directa con la acción de lenguaje oral."},
+{text:"Uniformes nuevos para los párvulos.",correct:false,speaker:"foreman",verdict:"Gasto no pedagógico",msg:"Los uniformes son gasto de bienestar general, no inversión pedagógica directa. Sin relación con la acción planificada."},
+{text:"Un viaje de fin de año a la playa para los niños de NT2.",correct:false,speaker:"chase",verdict:"Paseo no es acción pedagógica",msg:"Imputarlo como recurso de la acción de lenguaje oral es indefendible ante el auditor."}]},
+{sceneTitle:"Hora No Lectiva con SEP",patient:"Esc. Buenas Peras",ctx1:"Acción: Bloque miércoles planificación",ctx2:"SEP para mejora pedagógica",houseQuote:"Quieren pagar con SEP el tiempo de planificación docente. ¿Qué modalidad de gasto es legal según la normativa vigente?",options:[
+{text:"Pagar horas adicionales a los docentes por asistir al bloque de planificación fuera de su jornada contratada.",correct:true,speaker:"house",verdict:"Hora adicional aprobada",msg:"Si los docentes no tienen horas no lectivas suficientes en su contrato, el establecimiento puede pagar horas adicionales con SEP. Uso pertinente y documentable."},
+{text:"Pagar el sueldo base de los docentes con SEP en vez de la subvención general.",correct:false,speaker:"foreman",verdict:"Sustitución de financiamiento basal",msg:"La SEP no puede reemplazar la subvención general. Es un fondo adicional para mejoras, no un sustituto del financiamiento regular."},
+{text:"Darles bonos de productividad a los docentes que planifican mejor.",correct:false,speaker:"cameron",verdict:"Incentivo sin sustento normativo",msg:"La SEP no financia bonos por desempeño subjetivo. Los incentivos al personal tienen regulación específica."},
+{text:"Pagarle al Director para que supervise las planificaciones.",correct:false,speaker:"chase",verdict:"Función inherente al cargo",msg:"Supervisar el trabajo pedagógico es función propia del Director, no un servicio adicional facturable con SEP."}]},
+{sceneTitle:"ATE y Ley SEP",patient:"Esc. Cumpeo",ctx1:"Acción: Acompañamiento en aula",ctx2:"Proveedor externo",houseQuote:"Quieren contratar una ATE con fondos SEP. Correcto en principio. Pero hay condiciones. ¿Cuál de estos contratos pasa la auditoría?",options:[
+{text:"Contratar a un amigo del Director que sabe de educación, sin boleta ni contrato formal.",correct:false,speaker:"house",verdict:"Corrupción flagrante",msg:"Sin boleta, sin contrato, sin acreditación. La Superintendencia tiene gente entrenada para detectar exactamente esto."},
+{text:"Contratar a una empresa en el Registro de Asistencia Técnica del MINEDUC, con contrato firmado, plan de trabajo, productos definidos y rendición de gastos.",correct:true,speaker:"cameron",verdict:"Contratación ATE aprobada",msg:"Proveedor registrado, formalidad contractual, plan verificable, productos definidos. El auditor pedirá exactamente estos documentos."},
+{text:"Contratar a la misma ATE que todos los colegios del SLEP usan, sin revisar si se ajusta al diagnóstico.",correct:false,speaker:"foreman",verdict:"Pertinencia no acreditada",msg:"Una ATE genérica que no responde al diagnóstico puede ser observada por falta de pertinencia. El plan debe estar alineado con el PME."},
+{text:"Pagar a la ATE todo el presupuesto SEP en un ítem de 'asesoría general'.",correct:false,speaker:"chase",verdict:"Ítem demasiado vago",msg:"'Asesoría general' sin productos definidos es la forma más rápida de tener una observación del auditor. Cada pago debe vincularse a actividades específicas."}]}
+]},
+
+monitoreo:{label:"Monitoreo",phaseTag:"Fase 6 · Rondas Médicas",questions:[
+{sceneTitle:"Definir el Monitoreo del Plan",patient:"Esc. Titirilquén",ctx1:"Talleres lectura fluida 2° básico",ctx2:"Ejecución: Marzo–Noviembre",houseQuote:"Si no mides, no sabes si el tratamiento funciona o si estás matando al paciente más lentamente. ¿Cuándo y cómo sabrán si esto funciona?",options:[
+{text:"Ejecución: Marzo–Noviembre. Monitoreo: Diciembre, revisando actas finales.",correct:false,speaker:"house",verdict:"Autopsia, no monitoreo",msg:"Si monitoreas en diciembre, ya es tarde para cambiar la estrategia. Estás certificando la defunción del plan."},
+{text:"Ejecución: Marzo–Noviembre. Monitoreo: Cuando lo solicite el SLEP.",correct:false,speaker:"foreman",verdict:"Sin signos vitales propios",msg:"Un plan que se monitorea solo 'cuando lo piden' nació muerto. El seguimiento debe ser proactivo y calendarizado."},
+{text:"Ejecución: Marzo–Noviembre. Monitoreo: Semanal, con informe de 10 páginas por observación.",correct:false,speaker:"chase",verdict:"Burocracia paralizante",msg:"La micro-gestión ahoga al equipo en papeleo. El monitoreo debe ser riguroso pero proporcional a la carga real."},
+{text:"Ejecución: Marzo–Noviembre. Monitoreo: Bimensual, revisando niveles de logro lector con instrumento estandarizado.",correct:true,speaker:"cameron",verdict:"Monitoreo clínico aprobado",msg:"Bimensual permite observar tendencias y ajustar a mitad de año. El instrumento estandarizado garantiza comparabilidad. Medicina basada en evidencia."}]},
+{sceneTitle:"Indicador de Resultado",patient:"Liceo Pelotillehue",ctx1:"Objetivo: Reducir agresiones 40%",ctx2:"Talleres HSE mensuales",houseQuote:"El objetivo dice 'reducir 40% las agresiones'. ¿Cuál es el indicador que les dice si van bien o deben cambiar el tratamiento?",options:[
+{text:"La percepción del Encargado de Convivencia sobre el ambiente escolar.",correct:false,speaker:"house",verdict:"Percepción no es indicador",msg:"La percepción subjetiva no es un indicador. En medicina no le pregunto al enfermero si cree que el paciente está mejor. Le mido la presión y la temperatura."},
+{text:"Número de situaciones de agresión registradas en el Libro de Clases, comparado con el mismo período del año anterior.",correct:true,speaker:"cameron",verdict:"Indicador verificable aprobado",msg:"Fuente objetiva (Libro de Clases), comparación con línea base (año anterior), vinculado directamente al objetivo. Auditable sin discusión."},
+{text:"Que los estudiantes digan que el colegio es más tranquilo.",correct:false,speaker:"foreman",verdict:"Dato sin instrumento",msg:"La opinión estudiantil es valiosa pero necesita un instrumento estandarizado con escala y muestra definida. Así dicho, no es medible."},
+{text:"El número de actividades de convivencia realizadas durante el año.",correct:false,speaker:"chase",verdict:"Indicador de proceso, no de resultado",msg:"Contar actividades mide si implementaste el plan, no si funcionó. El objetivo pide un indicador de resultado en el paciente."}]},
+{sceneTitle:"Frecuencia de Monitoreo en Párvulos",patient:"Jardín Aplaplac",ctx1:"Rutina diaria lenguaje oral NT1-NT2",ctx2:"Ejecución: Marzo–Diciembre",houseQuote:"Los pacientes son párvulos. Las ventanas de desarrollo son cortas. Si la rutina no funciona, ¿cuánto tiempo puedo esperar antes de saberlo y reaccionar?",options:[
+{text:"Monitoreo semestral: junio y noviembre.",correct:false,speaker:"foreman",verdict:"Ventana demasiado larga",msg:"Con párvulos, el semestre es media vida de desarrollo. Si la rutina falla en marzo y lo sabes en junio, perdiste cuatro meses críticos."},
+{text:"Monitoreo mensual: revisión de planificaciones y observación de aula con retroalimentación de la Directora.",correct:true,speaker:"cameron",verdict:"Frecuencia adecuada aprobada",msg:"Mensual es apropiado para el ciclo parvulario: detectas desviaciones a tiempo y ajustas sin generar carga excesiva. La retroalimentación cierra el ciclo."},
+{text:"Monitoreo diario: la Directora observa cada rutina todos los días.",correct:false,speaker:"house",verdict:"Micro-gestión que paraliza",msg:"Si la Directora observa cada rutina diaria, ¿quién administra el jardín? La supervisión debe ser estratégica, no omnipresente."},
+{text:"Sin monitoreo formal: las educadoras avisan si hay problemas.",correct:false,speaker:"chase",verdict:"Automonitoreo sin estructura",msg:"'Avisar si hay problemas' es política de puertas abiertas, no monitoreo. El PME requiere proceso proactivo y estructurado."}]},
+{sceneTitle:"Instrumento de Monitoreo",patient:"Esc. Buenas Peras",ctx1:"Planificación colaborativa Matemática",ctx2:"Objetivo: Logro 60% 4° básico",houseQuote:"El bloque de planificación lleva dos meses. ¿Cómo sé si las planificaciones mejoran y si están teniendo impacto en el aula?",options:[
+{text:"Revisar si los docentes asisten al bloque del miércoles.",correct:false,speaker:"foreman",verdict:"Indicador de proceso insuficiente",msg:"La asistencia mide si se juntaron, no si valió la pena. Puedes tener 100% de asistencia y planificaciones idénticas a las del año anterior."},
+{text:"Pauta de revisión de planificaciones más evaluaciones intermedias de logro en Matemática, aplicadas bimensualmente por el UTP.",correct:true,speaker:"house",verdict:"Doble indicador aprobado",msg:"Combinas proceso (calidad de planificaciones) con resultado (logro estudiantil). El ciclo completo: mejor planificación → mejor práctica → mejor aprendizaje."},
+{text:"Preguntarle a los docentes si sienten que planifican mejor.",correct:false,speaker:"chase",verdict:"Autopercepción sin evidencia",msg:"La autopercepción es un insumo cualitativo útil, pero no puede ser el único indicador. El PME necesita evidencia objetiva."},
+{text:"Esperar el SIMCE del próximo año para ver si mejoró.",correct:false,speaker:"cameron",verdict:"Un año de demora",msg:"El SIMCE llega tarde. Para el ciclo anual del PME necesitas instrumentos propios que permitan reaccionar dentro del mismo año."}]},
+{sceneTitle:"Ajuste del Plan en Marcha",patient:"Esc. Titirilquén",ctx1:"Monitoreo bimensual Mayo",ctx2:"Meta: 240 pts. SIMCE Lenguaje",houseQuote:"Es mayo. El monitoreo muestra 35% de avance cuando la meta era 60%. ¿Qué hace el equipo directivo?",options:[
+{text:"Esperar al segundo monitoreo en agosto para tener más datos antes de actuar.",correct:false,speaker:"house",verdict:"Parálisis por análisis",msg:"Esperar tres meses con datos que indican que el tratamiento no funciona es negligencia médica. El monitoreo existe para actuar, no para acumular información."},
+{text:"Cambiar completamente la estrategia y empezar desde cero.",correct:false,speaker:"chase",verdict:"Sobrerreacción sin diagnóstico",msg:"Un dato de mayo no justifica tirar todo por la borda. Primero diagnostica por qué no funciona: ¿implementación, frecuencia, calidad de retroalimentación?"},
+{text:"Analizar en equipo la causa de la brecha, ajustar la frecuencia o metodología de los talleres y documentar el ajuste en el PME.",correct:true,speaker:"cameron",verdict:"Ajuste basado en evidencia aprobado",msg:"El ciclo virtuoso: monitorear → detectar brecha → analizar causas → ajustar → documentar. No se cambia todo ni se espera; se interviene con base en datos."},
+{text:"Informar al SLEP que los resultados van mal y esperar instrucciones.",correct:false,speaker:"foreman",verdict:"Delegación hacia arriba",msg:"El equipo directivo tiene autonomía y responsabilidad para hacer ajustes dentro del año. Escalar todo sin proponer soluciones demuestra falta de liderazgo directivo."}]}
+]}
+};
+
+const SPEAKERS={house:{name:"House",color:"#3b82f6",bg:"#1e3a5f"},cameron:{name:"Cameron",color:"#10b981",bg:"#064e3b"},foreman:{name:"Foreman",color:"#ef4444",bg:"#450a0a"},chase:{name:"Chase",color:"#f97316",bg:"#431407"}};
+const CATS=["diagnostico","objetivo","accion","responsable","sep","monitoreo"];
+const END_DATA=[
+{min:6,grade:"A+",color:"#10b981",title:"ALTA MÉDICA COMPLETA",closing:"Por una vez en mi carrera, el equipo no fue completamente inútil. Han demostrado que comprenden la diferencia entre un plan de mejora real y la colección de buenas intenciones que la mayoría llama PME. No lo estropeen en la implementación."},
+{min:4,grade:"B",color:"#3b82f6",title:"RECUPERACIÓN ESTABLE",closing:"Bien. No brillante, pero competente. Tienen lagunas. Revisen las fases donde fallaron y vuelvan a practicar. El paciente sobrevivirá, con supervisión."},
+{min:2,grade:"C",color:"#f59e0b",title:"DIAGNÓSTICO RESERVADO",closing:"Hicieron lo mínimo para no matar al paciente. Con este nivel, van a generar planes que la Superintendencia objetará. Estudien más antes de firmar un PME real."},
+{min:0,grade:"F",color:"#ef4444",title:"NEGLIGENCIA MÉDICA",closing:"No comprenden ni el diagnóstico ni la prescripción ni el seguimiento. Por favor, no firmen un PME hasta haber estudiado el marco lógico completo. Los estudiantes lo merecen."}
+];
+
+let session=[],currentIdx=0,score=0,correctCount=0,wrongCount=0,answered=false;
+
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+
+function buildSession(){
+  session=CATS.map(cat=>{
+    const cd=BANK[cat];
+    const q=shuffle(cd.questions)[0];
+    const opts=shuffle(q.options);
+    return{cat,cd,q,opts,isCorrect:null};
+  });
+}
+
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'instant'});}
+
+function startGame(){buildSession();currentIdx=0;score=0;correctCount=0;wrongCount=0;renderMarkers();renderPhase();showScreen('game');}
+
+function renderMarkers(){
+  document.getElementById('phase-markers').innerHTML=session.map((s,i)=>`<div class="phase-dot ${i<currentIdx?'done':i===currentIdx?'current':''}" id="pd${i}"><div class="phase-dot-circle"></div><span>${s.cd.label}</span></div>`).join('');
+}
+function updateMarkers(){session.forEach((_,i)=>{const el=document.getElementById('pd'+i);if(el)el.className='phase-dot '+(i<currentIdx?'done':i===currentIdx?'current':'');});}
+
+function renderPhase(){
+  answered=false;
+  const{cd,q,opts}=session[currentIdx];
+  document.getElementById('ecg-fill').style.width=Math.round((currentIdx/session.length)*100)+'%';
+  document.getElementById('score-display').textContent=score;
+  document.getElementById('correct-display').textContent=correctCount+'/'+session.length;
+  updateMarkers();
+  const letters=['A','B','C','D'];
+  document.getElementById('game-content').innerHTML=`
+    <div style="margin-bottom:1.5rem;">
+      <div class="phase-tag">${cd.phaseTag}</div>
+      <h2 class="scene-title">${q.sceneTitle}</h2>
+    </div>
+    <div class="briefing-card">
+      <div class="patient-info">
+        <div class="info-chip"><strong>${q.patient}</strong>Establecimiento</div>
+        <div class="info-chip"><strong>${q.ctx1}</strong>Datos clínicos</div>
+        <div class="info-chip"><strong>${q.ctx2}</strong>Contexto</div>
+      </div>
+      <div class="house-quote">${q.houseQuote}</div>
+    </div>
+    <div class="q-counter">
+      ${session.map((_,i)=>`<div class="q-dot ${i<currentIdx?'done':i===currentIdx?'active':''}"></div>`).join('')}
+      <span style="margin-left:4px">Fase ${currentIdx+1} de ${session.length}</span>
+    </div>
+    <div class="options" id="opts">
+      ${opts.map((o,i)=>`<button class="option-btn" onclick="pick(${i})"><span class="opt-letter">${letters[i]}</span><span class="opt-text">${o.text}</span></button>`).join('')}
+    </div>
+    <div id="fb"></div>`;
+}
+
+function pick(idx){
+  if(answered)return;
+  answered=true;
+  const{opts}=session[currentIdx];
+  const o=opts[idx];
+  const spk=SPEAKERS[o.speaker];
+  document.querySelectorAll('.option-btn').forEach((b,i)=>{
+    b.disabled=true;
+    if(i===idx)b.classList.add(o.correct?'correct':'wrong');
+    else if(opts[i].correct)b.classList.add('correct');
+  });
+  session[currentIdx].isCorrect=o.correct;
+  if(o.correct){const pts=100+(session.length-currentIdx)*10;score+=pts;correctCount++;flash('+'+pts);}
+  else wrongCount++;
+  document.getElementById('score-display').textContent=score;
+  document.getElementById('correct-display').textContent=correctCount+'/'+session.length;
+  document.getElementById('fb').innerHTML=`
+    <div class="feedback-panel ${o.correct?'fb-correct':'fb-wrong'}">
+      <div class="fb-inner">
+        <div class="fb-speaker">
+          <div class="fb-avatar" style="background:${spk.bg};color:${spk.color}">${spk.name[0]}</div>
+          <span class="fb-speaker-name">${spk.name}</span>
+        </div>
+        <div><div class="fb-verdict">${o.verdict}</div><div class="fb-message">"${o.msg}"</div></div>
+      </div>
+      <button class="btn-next" onclick="next()">${currentIdx<session.length-1?'SIGUIENTE FASE →':'VER DIAGNÓSTICO FINAL →'}</button>
+    </div>`;
+  document.getElementById('fb').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function flash(txt){const el=document.createElement('div');el.className='score-flash';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),1300);}
+
+function next(){
+  currentIdx++;
+  if(currentIdx>=session.length){end();return;}
+  renderPhase();updateMarkers();
+  document.getElementById('ecg-fill').style.width=Math.round((currentIdx/session.length)*100)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function end(){
+  document.getElementById('ecg-fill').style.width='100%';
+  const d=END_DATA.find(x=>correctCount>=x.min);
+  document.getElementById('end-grade').textContent=d.grade;
+  document.getElementById('end-grade').style.color=d.color;
+  document.getElementById('end-title').textContent=d.title;
+  document.getElementById('end-score').textContent=score;
+  document.getElementById('end-correct').textContent=correctCount;
+  document.getElementById('end-wrong').textContent=wrongCount;
+  document.getElementById('house-closing').textContent='"'+d.closing+'"';
+  document.getElementById('history-list').innerHTML=session.map(s=>`
+    <div class="history-row">
+      <span class="hist-badge ${s.isCorrect?'ok':'fail'}">${s.isCorrect?'OK':'FAIL'}</span>
+      <span class="hist-cat">${s.cd.label}</span>
+      <span>${s.q.sceneTitle}</span>
+    </div>`).join('');
+  showScreen('end');
+}
+</script>
+</body>
+</html>
